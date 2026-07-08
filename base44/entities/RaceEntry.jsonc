@@ -1,0 +1,36 @@
+{
+  "name": "RaceEntry",
+  "type": "object",
+  "properties": {
+    "race_id": {
+      "type": "string"
+    },
+    "lane_number": {
+      "type": "number"
+    },
+    "player_name": {
+      "type": "string"
+    },
+    "duck_name": {
+      "type": "string"
+    },
+    "duck_color": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "The user account that placed this buy-in"
+    },
+    "is_winner": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "race_id",
+    "lane_number",
+    "player_name",
+    "duck_name",
+    "duck_color"
+  ]
+}

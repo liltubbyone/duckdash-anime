@@ -1,0 +1,61 @@
+{
+  "name": "DuckRace",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "waiting",
+        "racing",
+        "finished"
+      ],
+      "default": "waiting"
+    },
+    "total_lanes": {
+      "type": "number",
+      "default": 6
+    },
+    "buy_in_amount": {
+      "type": "number",
+      "default": 10
+    },
+    "race_duration": {
+      "type": "number",
+      "default": 10,
+      "description": "Race duration in seconds"
+    },
+    "winner_lane": {
+      "type": "number"
+    },
+    "race_started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "race_finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_mass_race": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, uses canvas-based mass race rendering instead of individual lanes"
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of participant names for mass races"
+    },
+    "winner_name": {
+      "type": "string",
+      "description": "Winner name for mass races"
+    }
+  },
+  "required": [
+    "status",
+    "total_lanes",
+    "buy_in_amount",
+    "race_duration"
+  ]
+}
