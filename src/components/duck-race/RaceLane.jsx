@@ -60,7 +60,7 @@ export default function RaceLane({ laneNumber, entry, progress = 0, isRacing, is
             left: `${Math.min(8 + progress * 0.82, 90)}%`,
           }}
         >
-          <DuckSprite color={entry.duck_color} size={52} isRacing={isRacing} />
+          <DuckSprite color={entry.duck_color} size={52} isRacing={isRacing} hat={entry.hat} glasses={entry.glasses} clothes={entry.clothes} />
         </div>
       )}
 

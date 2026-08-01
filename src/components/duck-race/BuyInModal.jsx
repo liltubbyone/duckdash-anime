@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DuckSprite, { AVAILABLE_COLORS } from "./DuckSprite";
+import { HATS, GLASSES, CLOTHES } from "./accessories";
 
 const DUCK_NAMES = [
   "Quackzilla", "Sir Waddles", "Duckinator", "Captain Quack",
@@ -17,6 +18,9 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
   const [selectedColor, setSelectedColor] = useState(
     AVAILABLE_COLORS.find(c => !takenColors.includes(c)) || AVAILABLE_COLORS[0]
   );
+  const [hat, setHat] = useState("none");
+  const [glasses, setGlasses] = useState("none");
+  const [clothes, setClothes] = useState("none");
 
   // Reset player name to default whenever the modal opens
   useEffect(() => {
@@ -25,7 +29,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
   const handleConfirm = () => {
     if (!playerName.trim()) return;
-    onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor });
+    onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor, hat, glasses, clothes });
   };
 
   const availableColors = AVAILABLE_COLORS.filter(c => !takenColors.includes(c));
@@ -46,7 +50,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           <div className="flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 bg-sky-400/20 rounded-full blur-xl" />
-              <DuckSprite color={selectedColor} size={100} />
+              <DuckSprite color={selectedColor} size={100} hat={hat} glasses={glasses} clothes={clothes} />
             </div>
           </div>
 
@@ -107,6 +111,34 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                 🎲
               </Button>
             </div>
+          </div>
+
+          {/* Accessories */}
+          <div className="space-y-3">
+            {[
+              { label: "Hat", value: hat, set: setHat, options: HATS },
+              { label: "Glasses", value: glasses, set: setGlasses, options: GLASSES },
+              { label: "Clothes", value: clothes, set: setClothes, options: CLOTHES },
+            ].map(group => (
+              <div key={group.label}>
+                <Label className="text-sky-200 text-xs uppercase tracking-wider">{group.label}</Label>
+                <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  {group.options.map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => group.set(opt.id)}
+                      className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+                        group.value === opt.id
+                          ? "bg-sky-500 text-white"
+                          : "bg-white/10 text-white/60 hover:bg-white/20"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Buy in info */}

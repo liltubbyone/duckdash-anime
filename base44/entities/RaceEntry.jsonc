@@ -17,6 +17,18 @@
     "duck_color": {
       "type": "string"
     },
+    "hat": {
+      "type": "string",
+      "default": "none"
+    },
+    "glasses": {
+      "type": "string",
+      "default": "none"
+    },
+    "clothes": {
+      "type": "string",
+      "default": "none"
+    },
     "user_id": {
       "type": "string",
       "description": "The user account that placed this buy-in"

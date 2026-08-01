@@ -76,7 +76,7 @@ function createCrownSprite(size = SPRITE_SIZE) {
   return canvas;
 }
 
-export default function MassRaceTrack({ race, isRacing, onStart, onFinish }) {
+export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPositionsUpdate }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const animFrameRef = useRef(null);
@@ -85,6 +85,8 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish }) {
   const ducksRef = useRef([]);
   const speedsRef = useRef([]);
   const onFinishRef = useRef(onFinish);
+  const onPositionsUpdateRef = useRef(onPositionsUpdate);
+  const positionsFrameRef = useRef(0);
   const dimensionsRef = useRef({ width: 800, height: 450 });
   const spritesRef = useRef([]);
   const crownSpriteRef = useRef(null);
@@ -99,6 +101,10 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish }) {
   useEffect(() => {
     onFinishRef.current = onFinish;
   }, [onFinish]);
+
+  useEffect(() => {
+    onPositionsUpdateRef.current = onPositionsUpdate;
+  }, [onPositionsUpdate]);
 
   // Keep dimensionsRef in sync
   useEffect(() => {
@@ -197,6 +203,16 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish }) {
     if (!lastTimeRef.current) lastTimeRef.current = now;
     const dt = Math.min(50, now - lastTimeRef.current);
     lastTimeRef.current = now;
+
+    // Report live top-3 positions (throttled) for the leaderboard
+    positionsFrameRef.current++;
+    if (positionsFrameRef.current % 6 === 0 && onPositionsUpdateRef.current) {
+      const top = ducks
+        .map((d, i) => ({ name: d.name, colorIndex: i, progress: d.progress }))
+        .sort((a, b) => b.progress - a.progress)
+        .slice(0, 3);
+      onPositionsUpdateRef.current(top);
+    }
 
     // Check for winner
     if (!winnerRef.current) {

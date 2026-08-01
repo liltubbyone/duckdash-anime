@@ -8,7 +8,8 @@ import BuyInModal from "@/components/duck-race/BuyInModal";
 import AdminPanel from "@/components/duck-race/AdminPanel";
 import RaceHistory from "@/components/duck-race/RaceHistory";
 import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
-import DuckSprite from "@/components/duck-race/DuckSprite";
+import Leaderboard from "@/components/duck-race/Leaderboard";
+import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap, UserCircle } from "lucide-react";
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
   const [progresses, setProgresses] = useState({});
   const [winnerEntry, setWinnerEntry] = useState(null);
   const [showWinner, setShowWinner] = useState(false);
+  const [massRanked, setMassRanked] = useState([]);
   const animFrameRef = useRef(null);
   const speedsRef = useRef({});
 
@@ -95,13 +97,16 @@ export default function Home() {
     setBuyInModal({ open: true, lane: laneNumber });
   };
 
-  const confirmBuyIn = async ({ playerName, duckName, duckColor }) => {
+  const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes }) => {
     await base44.entities.RaceEntry.create({
       race_id: currentRace.id,
       lane_number: buyInModal.lane,
       player_name: playerName,
       duck_name: duckName,
       duck_color: duckColor,
+      hat,
+      glasses,
+      clothes,
       user_id: user?.id,
     });
     setBuyInModal({ open: false, lane: null });
@@ -205,6 +210,7 @@ export default function Home() {
     setWinnerEntry(null);
     setShowWinner(false);
     setIsRacing(false);
+    setMassRanked([]);
     await loadData();
   };
 
@@ -216,6 +222,17 @@ export default function Home() {
       race_started_at: new Date().toISOString(),
     });
   };
+
+  // Mass race: live positions reported by the canvas for the leaderboard
+  const handleMassRacePositions = useCallback((top) => {
+    setMassRanked(
+      top.map(t => ({
+        name: t.name,
+        color: AVAILABLE_COLORS[t.colorIndex % AVAILABLE_COLORS.length],
+        progress: (t.progress || 0) * 100,
+      }))
+    );
+  }, []);
 
   // Mass race: finish (called by MassRaceTrack when a duck crosses the line)
   const handleMassRaceFinish = async (winnerName) => {
@@ -251,6 +268,21 @@ export default function Home() {
   const totalLanes = currentRace?.total_lanes || 6;
   const takenColors = entries.map(e => e.duck_color);
   const prizePool = filledLanes * (currentRace?.buy_in_amount || 0);
+
+  // Live leaderboard ranking
+  const rankedEntries = currentRace?.is_mass_race
+    ? massRanked
+    : [...entries]
+        .sort((a, b) => (progresses[b.lane_number] || 0) - (progresses[a.lane_number] || 0))
+        .map(e => ({
+          name: e.duck_name,
+          color: e.duck_color,
+          progress: progresses[e.lane_number] || 0,
+          hat: e.hat,
+          glasses: e.glasses,
+          clothes: e.clothes,
+        }));
+  const showLeaderboard = currentRace && rankedEntries.length > 0 && (isRacing || currentRace.status === "waiting");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden">
@@ -345,6 +377,13 @@ export default function Home() {
           </div>
         )}
 
+        {/* Live leaderboard */}
+        {showLeaderboard && (
+          <div className="mb-6">
+            <Leaderboard ranked={rankedEntries} />
+          </div>
+        )}
+
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
           {/* Track */}
@@ -356,6 +395,7 @@ export default function Home() {
                   isRacing={isRacing}
                   onStart={handleMassRaceStart}
                   onFinish={handleMassRaceFinish}
+                  onPositionsUpdate={handleMassRacePositions}
                 />
               ) : (
                 <RaceTrack

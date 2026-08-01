@@ -1,4 +1,5 @@
 import React from "react";
+import { AccessoryLayers } from "./accessories";
 
 const DUCK_COLORS = {
   gold: { body: "#FFD700", beak: "#FF8C00", wing: "#FFC107", eye: "#1a1a2e" },
@@ -11,7 +12,7 @@ const DUCK_COLORS = {
 
 export const AVAILABLE_COLORS = Object.keys(DUCK_COLORS);
 
-export default function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "" }) {
+export default function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none" }) {
   const c = DUCK_COLORS[color] || DUCK_COLORS.gold;
 
   return (
@@ -43,6 +44,9 @@ export default function DuckSprite({ color = "gold", size = 60, isRacing = false
       <path d="M 22 50 Q 10 44 14 36" stroke={c.body} strokeWidth="2" fill="none" strokeLinecap="round" />
       {/* Water line ripples */}
       <path d="M 25 78 Q 35 74 45 78 Q 55 82 65 78 Q 75 74 82 78" stroke="rgba(255,255,255,0.4)" strokeWidth="2" fill="none" />
+
+      {/* Customization accessories */}
+      <AccessoryLayers hat={hat} glasses={glasses} clothes={clothes} />
     </svg>
   );
 }
