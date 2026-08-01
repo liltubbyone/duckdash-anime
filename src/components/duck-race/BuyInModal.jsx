@@ -50,7 +50,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-b from-slate-900 to-slate-800 border-sky-500/30 text-white">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-900 to-slate-800 border-sky-500/30 text-white">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-display">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
