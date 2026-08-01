@@ -22,6 +22,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
   const [hat, setHat] = useState(defaultLoadout?.hat || "none");
   const [glasses, setGlasses] = useState(defaultLoadout?.glasses || "none");
   const [clothes, setClothes] = useState(defaultLoadout?.clothes || "none");
+  const [submitting, setSubmitting] = useState(false);
 
   // Reset to saved loadout whenever the modal opens
   useEffect(() => {
@@ -35,9 +36,14 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
     }
   }, [open, defaultName, defaultLoadout]);
 
-  const handleConfirm = () => {
-    if (!playerName.trim()) return;
-    onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor, hat, glasses, clothes });
+  const handleConfirm = async () => {
+    if (!playerName.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      await onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor, hat, glasses, clothes });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const availableColors = AVAILABLE_COLORS.filter(c => !takenColors.includes(c));
@@ -157,10 +163,10 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
           <Button
             onClick={handleConfirm}
-            disabled={!playerName.trim() || availableColors.length === 0}
+            disabled={!playerName.trim() || availableColors.length === 0 || submitting}
             className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg h-12"
           >
-            🦆 Enter Race!
+            {submitting ? "Redirecting to checkout..." : `🦆 Enter Race — $${buyInAmount}`}
           </Button>
         </div>
       </DialogContent>

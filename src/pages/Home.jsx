@@ -60,6 +60,18 @@ export default function Home() {
     loadData();
   }, [loadData]);
 
+  // Payment redirect feedback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    if (payment === "success") {
+      toast({ title: "Payment successful! 🦆", description: "Your duck has joined the race." });
+    } else if (payment === "cancelled") {
+      toast({ title: "Payment cancelled", description: "Your buy-in was not completed.", variant: "destructive" });
+    }
+    if (payment) window.history.replaceState({}, "", window.location.pathname);
+  }, []);
+
   // Subscribe to realtime updates
   useEffect(() => {
     const unsubRace = base44.entities.DuckRace.subscribe((event) => {
@@ -98,19 +110,43 @@ export default function Home() {
   };
 
   const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes }) => {
-    await base44.entities.RaceEntry.create({
-      race_id: currentRace.id,
-      lane_number: buyInModal.lane,
-      player_name: playerName,
-      duck_name: duckName,
-      duck_color: duckColor,
-      hat,
-      glasses,
-      clothes,
-      user_id: user?.id,
-    });
-    setBuyInModal({ open: false, lane: null });
-    await loadData();
+    // Stripe checkout cannot run inside the builder preview iframe
+    if (window.self !== window.top) {
+      toast({
+        title: "Checkout unavailable in preview",
+        description: "Payments work only from the published app. Open the app in a new tab to buy in.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      const res = await base44.functions.invoke("create-checkout", {
+        race_id: currentRace.id,
+        preferred_lane: buyInModal.lane,
+        player_name: playerName,
+        duck_name: duckName,
+        duck_color: duckColor,
+        hat,
+        glasses,
+        clothes,
+        user_id: user?.id,
+      });
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        toast({
+          title: "Checkout failed",
+          description: res.data?.error || "Could not start checkout.",
+          variant: "destructive",
+        });
+      }
+    } catch (e) {
+      toast({
+        title: "Checkout failed",
+        description: e.message || "Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Race animation
