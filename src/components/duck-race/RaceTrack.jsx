@@ -1,9 +1,18 @@
 import React from "react";
 import RaceLane from "./RaceLane";
 
+const POSITION_LABELS = ["🥇", "🥈", "🥉"];
+
 export default function RaceTrack({ race, entries, progresses, isRacing, winnerLane, onBuyIn }) {
   const totalLanes = race?.total_lanes || 6;
   const lanes = Array.from({ length: totalLanes }, (_, i) => i + 1);
+
+  // Compute live ranking of filled lanes by progress (descending)
+  const ranked = [...entries]
+    .sort((a, b) => (progresses[b.lane_number] || 0) - (progresses[a.lane_number] || 0));
+  const laneRank = {};
+  ranked.forEach((e, idx) => { laneRank[e.lane_number] = idx + 1; });
+  const leaderLane = isRacing && !winnerLane && ranked.length > 0 ? ranked[0].lane_number : null;
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-2">
@@ -31,6 +40,8 @@ export default function RaceTrack({ race, entries, progresses, isRacing, winnerL
               progress={progresses[laneNum] || 0}
               isRacing={isRacing}
               isWinner={winnerLane === laneNum}
+              isLeader={leaderLane === laneNum}
+              position={laneRank[laneNum]}
               onBuyIn={() => onBuyIn(laneNum)}
             />
           );

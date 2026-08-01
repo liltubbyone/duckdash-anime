@@ -1,13 +1,20 @@
 import React from "react";
 import DuckSprite from "./DuckSprite";
 
-export default function RaceLane({ laneNumber, entry, progress = 0, isRacing, isWinner, onBuyIn }) {
+const POSITION_LABELS = ["🥇", "🥈", "🥉"];
+
+export default function RaceLane({ laneNumber, entry, progress = 0, isRacing, isWinner, isLeader, position, onBuyIn }) {
   const isEmpty = !entry;
+  const showRank = isRacing && entry && position;
 
   return (
     <div className={`relative w-full h-20 md:h-24 rounded-xl overflow-hidden transition-all duration-300 ${
-      isWinner ? "ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/30" : ""
-    }`}>
+      isWinner
+        ? "ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/30"
+        : isLeader
+          ? "ring-2 ring-emerald-400 shadow-lg shadow-emerald-400/20"
+          : ""
+    } ${isRacing && entry && !isLeader && !isWinner ? "opacity-70" : ""}`}>
       {/* Water background */}
       <div className="absolute inset-0 bg-gradient-to-r from-sky-400/80 via-cyan-400/70 to-blue-400/80">
         {/* Animated waves */}
@@ -63,7 +70,9 @@ export default function RaceLane({ laneNumber, entry, progress = 0, isRacing, is
           <div className={`px-2 py-1 rounded-md text-xs font-bold truncate max-w-[80px] ${
             isWinner
               ? "bg-yellow-400 text-yellow-900"
-              : "bg-white/15 backdrop-blur-sm text-white/90"
+              : isLeader
+                ? "bg-emerald-400 text-emerald-950"
+                : "bg-white/15 backdrop-blur-sm text-white/90"
           }`}>
             {entry.duck_name}
           </div>
@@ -73,6 +82,13 @@ export default function RaceLane({ laneNumber, entry, progress = 0, isRacing, is
       {/* Winner badge */}
       {isWinner && (
         <div className="absolute top-1 right-1 z-20 text-lg animate-bounce">👑</div>
+      )}
+
+      {/* Live position badge */}
+      {showRank && (
+        <div className="absolute top-1 left-12 z-20 text-sm font-bold">
+          {POSITION_LABELS[position - 1] || `${position}`}
+        </div>
       )}
     </div>
   );
