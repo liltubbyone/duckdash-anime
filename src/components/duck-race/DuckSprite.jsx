@@ -8,11 +8,19 @@ const DUCK_COLORS = {
   green: { body: "#66BB6A", beak: "#2E7D32", wing: "#81C784", eye: "#1a1a2e" },
   purple: { body: "#AB47BC", beak: "#7B1FA2", wing: "#CE93D8", eye: "#1a1a2e" },
   red: { body: "#EF5350", beak: "#C62828", wing: "#EF9A9A", eye: "#1a1a2e" },
+  teal: { body: "#26A69A", beak: "#00695C", wing: "#4DB6AC", eye: "#1a1a2e" },
+  orange: { body: "#FF9800", beak: "#E65100", wing: "#FFB74D", eye: "#1a1a2e" },
+  indigo: { body: "#5C6BC0", beak: "#283593", wing: "#7986CB", eye: "#1a1a2e" },
+  lime: { body: "#8BC34A", beak: "#33691E", wing: "#AED581", eye: "#1a1a2e" },
+  magenta: { body: "#E040FB", beak: "#6A1B9A", wing: "#EA80FC", eye: "#1a1a2e" },
+  silver: { body: "#B0BEC5", beak: "#607D8B", wing: "#CFD8DC", eye: "#1a1a2e" },
+  coral: { body: "#FF7043", beak: "#BF360C", wing: "#FF8A65", eye: "#1a1a2e" },
+  cyan: { body: "#4DD0E1", beak: "#00838F", wing: "#80DEEA", eye: "#1a1a2e" },
 };
 
 export const AVAILABLE_COLORS = Object.keys(DUCK_COLORS);
 
-export default function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none" }) {
+function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none" }) {
   const c = DUCK_COLORS[color] || DUCK_COLORS.gold;
 
   return (
@@ -50,3 +58,5 @@ export default function DuckSprite({ color = "gold", size = 60, isRacing = false
     </svg>
   );
 }
+
+export default React.memo(DuckSprite);

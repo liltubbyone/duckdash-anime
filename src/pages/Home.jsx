@@ -72,6 +72,11 @@ export default function Home() {
     if (payment) window.history.replaceState({}, "", window.location.pathname);
   }, []);
 
+  // Cancel the animation loop if the user navigates away mid-race
+  useEffect(() => {
+    return () => { if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
+  }, []);
+
   // Subscribe to realtime updates
   useEffect(() => {
     const unsubRace = base44.entities.DuckRace.subscribe((event) => {
@@ -174,6 +179,7 @@ export default function Home() {
     setProgresses({ ...localProgress });
 
     let lastTime = performance.now();
+    let lastStateUpdate = 0;
     let winner = null;
 
     const animate = (now) => {
@@ -189,7 +195,11 @@ export default function Home() {
         localProgress[e.lane_number] = Math.min(100, Math.max(0, localProgress[e.lane_number] + speed * dt));
       });
 
-      setProgresses({ ...localProgress });
+      // Throttle React state updates to ~30fps to avoid over-rendering on mobile
+      if (now - lastStateUpdate > 33) {
+        setProgresses({ ...localProgress });
+        lastStateUpdate = now;
+      }
 
       // First duck to cross the finish line is the winner
       if (!winner) {
@@ -198,6 +208,7 @@ export default function Home() {
       }
 
       if (winner) {
+        setProgresses({ ...localProgress });
         finishRace(winner);
       } else {
         animFrameRef.current = requestAnimationFrame(animate);
