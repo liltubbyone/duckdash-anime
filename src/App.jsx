@@ -9,6 +9,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Home from '@/pages/Home';
 import Profile from '@/pages/Profile';
 import Settings from '@/pages/Settings';
+import Customize from '@/pages/Customize';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -40,6 +41,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Home />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/customize" element={<Customize />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

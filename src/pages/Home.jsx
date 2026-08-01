@@ -10,7 +10,7 @@ import RaceHistory from "@/components/duck-race/RaceHistory";
 import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
-import { Users, Zap, UserCircle } from "lucide-react";
+import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
 
 export default function Home() {
   const { toast } = useToast();
@@ -322,13 +322,22 @@ export default function Home() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-6 md:py-10">
         {/* Profile link */}
-        <Link
-          to="/profile"
-          className="absolute top-4 right-4 flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white text-sm transition-all"
-        >
-          <UserCircle className="w-4 h-4" />
-          <span className="hidden sm:inline">My Profile</span>
-        </Link>
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          <Link
+            to="/customize"
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white text-sm transition-all"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span className="hidden sm:inline">Customize</span>
+          </Link>
+          <Link
+            to="/profile"
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white text-sm transition-all"
+          >
+            <UserCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">My Profile</span>
+          </Link>
+        </div>
 
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
@@ -442,6 +451,7 @@ export default function Home() {
         buyInAmount={currentRace?.buy_in_amount || 10}
         takenColors={takenColors}
         defaultName={user?.full_name || ""}
+        defaultLoadout={user}
         onConfirm={confirmBuyIn}
       />
 

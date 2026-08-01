@@ -12,20 +12,28 @@ const DUCK_NAMES = [
   "Turbo Quack", "Duck Norris", "Wave Rider", "Swift Tail"
 ];
 
-export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, takenColors, onConfirm, defaultName = "" }) {
+export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, takenColors, onConfirm, defaultName = "", defaultLoadout = {} }) {
+  const savedColor = defaultLoadout?.duck_color;
   const [playerName, setPlayerName] = useState(defaultName);
   const [duckName, setDuckName] = useState(DUCK_NAMES[Math.floor(Math.random() * DUCK_NAMES.length)]);
   const [selectedColor, setSelectedColor] = useState(
-    AVAILABLE_COLORS.find(c => !takenColors.includes(c)) || AVAILABLE_COLORS[0]
+    savedColor && !takenColors.includes(savedColor) ? savedColor : AVAILABLE_COLORS.find(c => !takenColors.includes(c)) || AVAILABLE_COLORS[0]
   );
-  const [hat, setHat] = useState("none");
-  const [glasses, setGlasses] = useState("none");
-  const [clothes, setClothes] = useState("none");
+  const [hat, setHat] = useState(defaultLoadout?.hat || "none");
+  const [glasses, setGlasses] = useState(defaultLoadout?.glasses || "none");
+  const [clothes, setClothes] = useState(defaultLoadout?.clothes || "none");
 
-  // Reset player name to default whenever the modal opens
+  // Reset to saved loadout whenever the modal opens
   useEffect(() => {
-    if (open) setPlayerName(defaultName);
-  }, [open, defaultName]);
+    if (open) {
+      setPlayerName(defaultName);
+      setHat(defaultLoadout?.hat || "none");
+      setGlasses(defaultLoadout?.glasses || "none");
+      setClothes(defaultLoadout?.clothes || "none");
+      const sc = defaultLoadout?.duck_color;
+      if (sc && !takenColors.includes(sc)) setSelectedColor(sc);
+    }
+  }, [open, defaultName, defaultLoadout]);
 
   const handleConfirm = () => {
     if (!playerName.trim()) return;
