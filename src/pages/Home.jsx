@@ -11,6 +11,7 @@ import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
 import RacePreviewSlides from "@/components/duck-race/RacePreviewSlides";
 import SocialShare from "@/components/duck-race/SocialShare";
+import RaceEditor from "@/components/duck-race/RaceEditor";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -289,6 +290,33 @@ export default function Home() {
     await loadData();
   };
 
+  // Admin: update an existing (published) race
+  const handleUpdateRace = async (raceId, updates) => {
+    try {
+      await base44.entities.DuckRace.update(raceId, updates);
+      toast({ title: "Race updated", description: "Your changes have been saved." });
+      await loadData();
+    } catch (e) {
+      toast({ title: "Update failed", description: e.message, variant: "destructive" });
+    }
+  };
+
+  // Admin: delete a race and all its entries
+  const handleDeleteRace = async (raceId) => {
+    try {
+      await base44.entities.RaceEntry.deleteMany({ race_id: raceId });
+      await base44.entities.DuckRace.delete(raceId);
+      if (selectedRaceId === raceId) setSelectedRaceId(null);
+      resetAnimState();
+      setWinnerEntry(null);
+      setShowWinner(false);
+      toast({ title: "Race deleted", description: "The race and its entries were removed." });
+      await loadData();
+    } catch (e) {
+      toast({ title: "Delete failed", description: e.message, variant: "destructive" });
+    }
+  };
+
   // Mass race: start
   const handleMassRaceStart = async (race = currentRace) => {
     if (!race) return;
@@ -379,6 +407,11 @@ export default function Home() {
 
   const filledLanes = entries.length;
   const totalLanes = currentRace?.total_lanes || 6;
+  const totalSpots = currentRace
+    ? (currentRace.is_mass_race
+        ? currentRace.total_lanes
+        : currentRace.total_lanes * (currentRace.ducks_per_lane || 1))
+    : 0;
   const takenColors = currentRace?.is_mass_race ? [] : entries.map(e => e.duck_color);
   const prizePool = filledLanes * (currentRace?.buy_in_amount || 0);
   const availableLanes = (() => {
@@ -485,6 +518,7 @@ export default function Home() {
             onSelect={handleSelectRace}
             isAdmin={isAdmin}
             onStartRace={handleStartRace}
+            onDeleteRace={handleDeleteRace}
           />
         )}
 
@@ -494,9 +528,7 @@ export default function Home() {
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
               <Users className="w-4 h-4 text-sky-400" />
               <span className="text-white/80 text-sm">
-                {currentRace.is_mass_race
-                  ? `${currentRace.participants?.length || 0} Ducks`
-                  : `${filledLanes}/${totalLanes} Ducks`}
+                {`${filledLanes}/${totalSpots} Ducks`}
               </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
@@ -594,6 +626,13 @@ export default function Home() {
 
           {/* Sidebar */}
           <div className="space-y-4">
+            {isAdmin && currentRace && (
+              <RaceEditor
+                race={currentRace}
+                onUpdate={handleUpdateRace}
+                onDelete={handleDeleteRace}
+              />
+            )}
             {isAdmin && (
               <AdminPanel
                 race={currentRace}

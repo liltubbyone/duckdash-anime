@@ -1,9 +1,9 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
 import DuckSprite from "./DuckSprite";
-import { Users, Zap, Play } from "lucide-react";
+import { Users, Zap, Play, Trash2 } from "lucide-react";
 
-export default function RacePreviewSlides({ races, allEntries, selectedRaceId, onSelect, isAdmin, onStartRace }) {
+export default function RacePreviewSlides({ races, allEntries, selectedRaceId, onSelect, isAdmin, onStartRace, onDeleteRace }) {
   if (!races || races.length === 0) return null;
 
   return (
@@ -34,6 +34,14 @@ export default function RacePreviewSlides({ races, allEntries, selectedRaceId, o
                   <div className="flex items-center justify-center h-full">
                     <DuckSprite color="gold" size={56} />
                   </div>
+                )}
+                {isAdmin && onDeleteRace && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); if (confirm("Delete this race and its entries?")) onDeleteRace(race.id); }}
+                    className="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/60 text-white/80 hover:bg-red-500/70 flex items-center justify-center z-10"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
                 )}
                 <div className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                   race.status === "waiting" ? "bg-green-500/25 text-green-300" : "bg-orange-500/25 text-orange-300"
