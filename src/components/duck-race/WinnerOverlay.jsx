@@ -44,7 +44,9 @@ export default function WinnerOverlay({ winner, onClose }) {
               </h2>
               <p className="text-white text-xl font-bold mt-1">{winner.duck_name}</p>
               <p className="text-white/60 text-sm">Owned by {winner.player_name}</p>
-              <p className="text-yellow-400/80 text-xs mt-1">Lane #{winner.lane_number}</p>
+              {winner.lane_number ? (
+                <p className="text-yellow-400/80 text-xs mt-1">Lane #{winner.lane_number}</p>
+              ) : null}
             </div>
 
             <button

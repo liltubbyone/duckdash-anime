@@ -523,7 +523,7 @@ export default function Home() {
         open={buyInModal.open}
         onClose={() => setBuyInModal({ open: false, lane: null })}
         laneNumber={buyInModal.lane}
-        buyInAmount={currentRace?.buy_in_amount || 10}
+        buyInAmount={currentRace?.buy_in_amount ?? 0}
         takenColors={takenColors}
         defaultName={user?.full_name || ""}
         defaultLoadout={user}
