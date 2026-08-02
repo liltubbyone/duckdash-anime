@@ -10,6 +10,7 @@ import RaceHistory from "@/components/duck-race/RaceHistory";
 import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
 import RacePreviewSlides from "@/components/duck-race/RacePreviewSlides";
+import SocialShare from "@/components/duck-race/SocialShare";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -59,6 +60,13 @@ export default function Home() {
       toast({ title: "Payment cancelled", description: "Your buy-in was not completed.", variant: "destructive" });
     }
     if (payment) window.history.replaceState({}, "", window.location.pathname);
+  }, []);
+
+  // Pre-select a race opened from a shared link (?race=<id>)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shared = params.get("race");
+    if (shared) setSelectedRaceId(shared);
   }, []);
 
   // Cancel the animation loop if the user navigates away mid-race
@@ -189,6 +197,7 @@ export default function Home() {
       status: "racing",
       race_started_at: new Date().toISOString(),
     });
+    notifyRaceStart(race);
 
     const durationMs = Math.max(3, race.race_duration || 10) * 1000;
     const baseSpeed = 100 / durationMs;
@@ -289,6 +298,7 @@ export default function Home() {
       status: "racing",
       race_started_at: new Date().toISOString(),
     });
+    notifyRaceStart(race);
   };
 
   const handleMassRacePositions = useCallback((top) => {
@@ -310,6 +320,12 @@ export default function Home() {
     });
     setIsRacing(false);
     await loadData();
+  };
+
+  // Email all participants that their race is starting (fire-and-forget)
+  const notifyRaceStart = (race) => {
+    if (!race) return;
+    base44.functions.invoke("notify-race-start", { race_id: race.id }).catch(() => {});
   };
 
   // Admin: manually start any race (even before it's full) — from the preview slides or the panel
@@ -521,6 +537,13 @@ export default function Home() {
                 <p className="text-yellow-300 text-sm">🏆 {currentRace.prize_name}</p>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Invite friends to fill empty lanes */}
+        {currentRace && currentRace.status === "waiting" && (
+          <div className="flex justify-center mb-6">
+            <SocialShare raceId={currentRace.id} raceName={currentRace.race_name} />
           </div>
         )}
 

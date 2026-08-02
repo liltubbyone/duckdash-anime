@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 const TOAST_LIMIT = 20;
-const TOAST_REMOVE_DELAY = 5000;
+const TOAST_REMOVE_DELAY = 300;
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -133,6 +133,13 @@ function toast({ ...props }) {
       },
     },
   });
+
+  // Auto-dismiss after the configured duration (default 5s) so notifications
+  // don't pile up — the close button alone isn't enough.
+  const duration = props.duration ?? 5000;
+  if (duration !== Infinity) {
+    setTimeout(() => dismiss(), duration);
+  }
 
   return {
     id,
