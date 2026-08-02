@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace, isRacing }) {
-  const [buyIn, setBuyIn] = useState(10);
-  const [lanes, setLanes] = useState(6);
+  const [buyIn, setBuyIn] = useState("10");
+  const [lanes, setLanes] = useState("6");
   const [duration, setDuration] = useState(race?.race_duration || 10);
   const [isMass, setIsMass] = useState(false);
   const [namesText, setNamesText] = useState("");
@@ -16,15 +16,17 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
   const isMassRace = race?.is_mass_race;
 
   const handleNewRace = () => {
+    const buyInNum = Math.max(0, Number(buyIn) || 0);
+    const lanesNum = Math.min(20, Math.max(2, Number(lanes) || 2));
     if (isMass) {
       const names = namesText
         .split("\n")
         .map(n => n.trim())
         .filter(n => n.length > 0)
         .slice(0, 1000);
-      onNewRace(buyIn, lanes, duration, { isMassRace: true, participants: names });
+      onNewRace(buyInNum, lanesNum, duration, { isMassRace: true, participants: names });
     } else {
-      onNewRace(buyIn, lanes, duration);
+      onNewRace(buyInNum, lanesNum, duration);
     }
   };
 
@@ -111,8 +113,8 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                 <Input
                   type="number"
                   value={buyIn}
-                  onChange={e => setBuyIn(Number(e.target.value))}
-                  min={1}
+                  onChange={e => setBuyIn(e.target.value)}
+                  min={0}
                   className="bg-white/10 border-white/20 text-white mt-1"
                 />
               </div>
@@ -121,7 +123,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                 <Input
                   type="number"
                   value={lanes}
-                  onChange={e => setLanes(Math.min(20, Math.max(2, Number(e.target.value))))}
+                  onChange={e => setLanes(e.target.value)}
                   min={2}
                   max={20}
                   className="bg-white/10 border-white/20 text-white mt-1"

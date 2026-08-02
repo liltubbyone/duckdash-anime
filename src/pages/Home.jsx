@@ -115,6 +115,34 @@ export default function Home() {
   };
 
   const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes }) => {
+    // Free race ($0 buy-in): skip checkout and add the duck directly
+    if (!currentRace.buy_in_amount || currentRace.buy_in_amount <= 0) {
+      try {
+        const takenLanes = new Set(entries.map(e => e.lane_number));
+        let lane = buyInModal.lane;
+        if (!lane || takenLanes.has(lane)) {
+          lane = 1;
+          while (takenLanes.has(lane) && lane <= currentRace.total_lanes) lane++;
+        }
+        await base44.entities.RaceEntry.create({
+          race_id: currentRace.id,
+          lane_number: lane,
+          player_name: playerName,
+          duck_name: duckName,
+          duck_color: duckColor,
+          hat,
+          glasses,
+          clothes,
+          user_id: user?.id,
+          is_winner: false,
+        });
+        setBuyInModal({ open: false, lane: null });
+        toast({ title: "You're in! 🦆", description: "Your duck has joined the race." });
+      } catch (e) {
+        toast({ title: "Could not join", description: e.message, variant: "destructive" });
+      }
+      return;
+    }
     // Stripe checkout cannot run inside the builder preview iframe
     if (window.self !== window.top) {
       toast({

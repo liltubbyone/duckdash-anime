@@ -158,7 +158,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           {/* Buy in info */}
           <div className="bg-white/5 rounded-lg p-3 text-center border border-white/10">
             <p className="text-white/60 text-xs">Buy-in Amount</p>
-            <p className="text-2xl font-bold text-yellow-400">${buyInAmount}</p>
+            <p className="text-2xl font-bold text-yellow-400">{buyInAmount > 0 ? `$${buyInAmount}` : "FREE"}</p>
           </div>
 
           <Button
@@ -166,7 +166,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
             disabled={!playerName.trim() || availableColors.length === 0 || submitting}
             className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg h-12"
           >
-            {submitting ? "Redirecting to checkout..." : `🦆 Enter Race — $${buyInAmount}`}
+            {submitting ? "Redirecting to checkout..." : buyInAmount > 0 ? `🦆 Enter Race — $${buyInAmount}` : "🦆 Enter Race — Free"}
           </Button>
         </div>
       </DialogContent>
