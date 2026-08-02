@@ -9,20 +9,20 @@ import AdminPanel from "@/components/duck-race/AdminPanel";
 import RaceHistory from "@/components/duck-race/RaceHistory";
 import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
+import RacePreviewSlides from "@/components/duck-race/RacePreviewSlides";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 export default function Home() {
   const { toast } = useToast();
-  const [currentRace, setCurrentRace] = useState(null);
-  const [entries, setEntries] = useState([]);
   const [allRaces, setAllRaces] = useState([]);
   const [allEntries, setAllEntries] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedRaceId, setSelectedRaceId] = useState(null);
 
-  // Race animation state
+  // Animation state for the currently selected race
   const [isRacing, setIsRacing] = useState(false);
   const [progresses, setProgresses] = useState({});
   const [winnerEntry, setWinnerEntry] = useState(null);
@@ -30,36 +30,24 @@ export default function Home() {
   const [massRanked, setMassRanked] = useState([]);
   const animFrameRef = useRef(null);
   const speedsRef = useRef({});
+  const isRacingRef = useRef(false);
 
   // Modal state
   const [buyInModal, setBuyInModal] = useState({ open: false, lane: null });
 
-  // Load data
   const loadData = useCallback(async () => {
     const [races, entries, me] = await Promise.all([
-      base44.entities.DuckRace.list("-created_date", 20),
-      base44.entities.RaceEntry.list("-created_date", 100),
+      base44.entities.DuckRace.list("-created_date", 50),
+      base44.entities.RaceEntry.list("-created_date", 200),
       base44.auth.me(),
     ]);
-
     setAllRaces(races);
     setAllEntries(entries);
     setUser(me);
-
-    // Find current active race (waiting or racing)
-    const active = races.find(r => r.status === "waiting" || r.status === "racing");
-    setCurrentRace(active || null);
-    if (active) {
-      setEntries(entries.filter(e => e.race_id === active.id));
-    } else {
-      setEntries([]);
-    }
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useEffect(() => { loadData(); }, [loadData]);
 
   // Payment redirect feedback
   useEffect(() => {
@@ -81,35 +69,37 @@ export default function Home() {
   // Subscribe to realtime updates
   useEffect(() => {
     const unsubRace = base44.entities.DuckRace.subscribe((event) => {
-      if (event.type === "create" || event.type === "update") {
-        loadData();
-      }
+      if (event.type === "create" || event.type === "update") loadData();
     });
     const unsubEntry = base44.entities.RaceEntry.subscribe((event) => {
-      if (event.type === "create" || event.type === "update") {
-        loadData();
-      }
+      if (event.type === "create" || event.type === "update") loadData();
     });
     return () => { unsubRace(); unsubEntry(); };
   }, [loadData]);
 
-  // Auto-start when all spots are filled (unless admin set manual start)
-  useEffect(() => {
-    if (!currentRace || isRacing || currentRace.status !== "waiting") return;
-    if (currentRace.auto_start === false) return;
-    const capacity = currentRace.is_mass_race
-      ? currentRace.total_lanes || 0
-      : currentRace.total_lanes * (currentRace.ducks_per_lane || 1);
-    if (capacity >= 2 && entries.length >= capacity) {
-      if (currentRace.is_mass_race) {
-        setTimeout(() => handleMassRaceStart(), 1000);
-      } else {
-        setTimeout(() => startRaceAnimation(), 1000);
-      }
-    }
-  }, [entries.length, currentRace?.status]);
+  // Derived: active races + the one being viewed + its entries
+  const activeRaces = allRaces.filter(r => r.status === "waiting" || r.status === "racing");
+  const currentRace = activeRaces.find(r => r.id === selectedRaceId) || activeRaces[0] || null;
+  const entries = currentRace ? allEntries.filter(e => e.race_id === currentRace.id) : [];
 
   const isAdmin = user?.role === "admin";
+
+  const resetAnimState = useCallback(() => {
+    if (animFrameRef.current) { cancelAnimationFrame(animFrameRef.current); animFrameRef.current = null; }
+    isRacingRef.current = false;
+    setIsRacing(false);
+    setProgresses({});
+    setMassRanked([]);
+  }, []);
+
+  // Select a race from the preview slides
+  const handleSelectRace = (id) => {
+    if (id === selectedRaceId) return;
+    resetAnimState();
+    setWinnerEntry(null);
+    setShowWinner(false);
+    setSelectedRaceId(id);
+  };
 
   // Buy in handler
   const handleBuyIn = (laneNumber) => {
@@ -121,6 +111,7 @@ export default function Home() {
   };
 
   const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes, lane: chosenLane }) => {
+    if (!currentRace) return;
     // Free race ($0 buy-in): skip checkout and add the duck directly
     if (!currentRace.buy_in_amount || currentRace.buy_in_amount <= 0) {
       try {
@@ -181,40 +172,30 @@ export default function Home() {
       if (res.data?.url) {
         window.location.href = res.data.url;
       } else {
-        toast({
-          title: "Checkout failed",
-          description: res.data?.error || "Could not start checkout.",
-          variant: "destructive",
-        });
+        toast({ title: "Checkout failed", description: res.data?.error || "Could not start checkout.", variant: "destructive" });
       }
     } catch (e) {
-      toast({
-        title: "Checkout failed",
-        description: e.message || "Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Checkout failed", description: e.message || "Please try again.", variant: "destructive" });
     }
   };
 
-  // Race animation
-  const startRaceAnimation = async () => {
-    if (isRacing || entries.length < 2) return;
+  // Race animation (lane mode)
+  const startRaceAnimation = async (race = currentRace, raceEntries = entries) => {
+    if (!race || isRacingRef.current || raceEntries.length < 2) return;
 
+    isRacingRef.current = true;
     setIsRacing(true);
-    await base44.entities.DuckRace.update(currentRace.id, {
+    await base44.entities.DuckRace.update(race.id, {
       status: "racing",
       race_started_at: new Date().toISOString(),
     });
 
-    // Dynamic speed animation: each duck's speed fluctuates randomly every frame,
-    // so positions shift constantly and the winner stays unpredictable until the end.
-    // The first duck to actually cross the finish line wins.
-    const durationMs = Math.max(3, currentRace.race_duration || 10) * 1000;
+    const durationMs = Math.max(3, race.race_duration || 10) * 1000;
     const baseSpeed = 100 / durationMs;
 
     const localProgress = {};
-    const speedState = {}; // tracks each duck's current fluctuating speed
-    entries.forEach(e => {
+    const speedState = {};
+    raceEntries.forEach(e => {
       localProgress[e.id] = 0;
       speedState[e.id] = baseSpeed;
     });
@@ -228,30 +209,26 @@ export default function Home() {
       const dt = now - lastTime;
       lastTime = now;
 
-      entries.forEach(e => {
-        // Occasionally change each duck's speed multiplier for surges / slowdowns
+      raceEntries.forEach(e => {
         if (Math.random() < 0.08) {
           speedState[e.id] = baseSpeed * (0.4 + Math.random() * 1.3);
         }
-        const speed = speedState[e.id];
-        localProgress[e.id] = Math.min(100, Math.max(0, localProgress[e.id] + speed * dt));
+        localProgress[e.id] = Math.min(100, Math.max(0, localProgress[e.id] + speedState[e.id] * dt));
       });
 
-      // Throttle React state updates to ~30fps to avoid over-rendering on mobile
       if (now - lastStateUpdate > 33) {
         setProgresses({ ...localProgress });
         lastStateUpdate = now;
       }
 
-      // First duck to cross the finish line is the winner
       if (!winner) {
-        const crossed = entries.find(e => localProgress[e.id] >= 100);
+        const crossed = raceEntries.find(e => localProgress[e.id] >= 100);
         if (crossed) winner = crossed;
       }
 
       if (winner) {
         setProgresses({ ...localProgress });
-        finishRace(winner);
+        finishRace(winner, race);
       } else {
         animFrameRef.current = requestAnimationFrame(animate);
       }
@@ -260,14 +237,15 @@ export default function Home() {
     animFrameRef.current = requestAnimationFrame(animate);
   };
 
-  const finishRace = async (winner) => {
+  const finishRace = async (winner, race = currentRace) => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    isRacingRef.current = false;
 
     setWinnerEntry(winner);
     setTimeout(() => setShowWinner(true), 800);
 
     await Promise.all([
-      base44.entities.DuckRace.update(currentRace.id, {
+      base44.entities.DuckRace.update(race.id, {
         status: "finished",
         winner_lane: winner.lane_number,
         race_finished_at: new Date().toISOString(),
@@ -279,13 +257,8 @@ export default function Home() {
     await loadData();
   };
 
-  // Admin: create new race
+  // Admin: create a new race (existing races stay open so several can run at once)
   const handleNewRace = async (buyInAmount, totalLanes, duration, opts = {}) => {
-    // Mark any existing waiting/racing races as finished
-    if (currentRace && currentRace.status !== "finished") {
-      await base44.entities.DuckRace.update(currentRace.id, { status: "finished" });
-    }
-
     const newRace = await base44.entities.DuckRace.create({
       status: "waiting",
       total_lanes: totalLanes,
@@ -300,38 +273,34 @@ export default function Home() {
       prize_image: opts.prize_image || "",
     });
 
-    setProgresses({});
+    resetAnimState();
     setWinnerEntry(null);
     setShowWinner(false);
-    setIsRacing(false);
-    setMassRanked([]);
+    setSelectedRaceId(newRace.id);
     await loadData();
   };
 
-  // Mass race: start (sets status to racing; the canvas component runs the animation)
-  const handleMassRaceStart = async () => {
+  // Mass race: start
+  const handleMassRaceStart = async (race = currentRace) => {
+    if (!race) return;
+    isRacingRef.current = true;
     setIsRacing(true);
-    await base44.entities.DuckRace.update(currentRace.id, {
+    await base44.entities.DuckRace.update(race.id, {
       status: "racing",
       race_started_at: new Date().toISOString(),
     });
   };
 
-  // Mass race: live positions reported by the canvas for the leaderboard
   const handleMassRacePositions = useCallback((top) => {
     setMassRanked(
-      top.map(t => ({
-        name: t.name,
-        hex: t.hex,
-        progress: (t.progress || 0) * 100,
-      }))
+      top.map(t => ({ name: t.name, hex: t.hex, progress: (t.progress || 0) * 100 }))
     );
   }, []);
 
-  // Mass race: finish (called by MassRaceTrack when a duck crosses the line)
   const handleMassRaceFinish = async (winner) => {
     const winnerName = winner?.name || winner;
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    isRacingRef.current = false;
     setWinnerEntry({ duck_name: winnerName, duck_hex: winner?.hex, duck_color: "gold", lane_number: 0, player_name: winner?.player_name || winnerName, hat: winner?.hat, glasses: winner?.glasses, clothes: winner?.clothes });
     setTimeout(() => setShowWinner(true), 800);
     await base44.entities.DuckRace.update(currentRace.id, {
@@ -343,10 +312,43 @@ export default function Home() {
     await loadData();
   };
 
-  // Admin: manually start
-  const handleStartRace = () => {
-    if (entries.length >= 2) startRaceAnimation();
+  // Admin: manually start any race (even before it's full) — from the preview slides or the panel
+  const handleStartRace = async (raceId) => {
+    const race = allRaces.find(r => r.id === raceId);
+    if (!race) return;
+    const raceEntries = allEntries.filter(e => e.race_id === raceId);
+    if (raceEntries.length < 2) {
+      toast({ title: "Need at least 2 ducks to start", variant: "destructive" });
+      return;
+    }
+    if (selectedRaceId !== raceId) {
+      resetAnimState();
+      setWinnerEntry(null);
+      setShowWinner(false);
+      setSelectedRaceId(raceId);
+    }
+    if (race.is_mass_race) {
+      await handleMassRaceStart(race);
+    } else {
+      await startRaceAnimation(race, raceEntries);
+    }
   };
+
+  // Auto-start the selected race when all spots are filled (unless admin set manual start)
+  useEffect(() => {
+    if (!currentRace || isRacing || currentRace.status !== "waiting") return;
+    if (currentRace.auto_start === false) return;
+    const capacity = currentRace.is_mass_race
+      ? currentRace.total_lanes || 0
+      : currentRace.total_lanes * (currentRace.ducks_per_lane || 1);
+    if (capacity >= 2 && entries.length >= capacity) {
+      if (currentRace.is_mass_race) {
+        setTimeout(() => handleMassRaceStart(), 1000);
+      } else {
+        setTimeout(() => startRaceAnimation(), 1000);
+      }
+    }
+  }, [currentRace?.id, currentRace?.status, entries.length, isRacing]);
 
   if (loading) {
     return (
@@ -375,7 +377,6 @@ export default function Home() {
     return list;
   })();
 
-  // Live leaderboard ranking
   const rankedEntries = currentRace?.is_mass_race
     ? massRanked
     : [...entries]
@@ -458,6 +459,18 @@ export default function Home() {
             アヒルレース · Pick your duck · Win the race
           </p>
         </div>
+
+        {/* Preview slides (shown when several races are open at once) */}
+        {activeRaces.length >= 2 && (
+          <RacePreviewSlides
+            races={activeRaces}
+            allEntries={allEntries}
+            selectedRaceId={currentRace?.id}
+            onSelect={handleSelectRace}
+            isAdmin={isAdmin}
+            onStartRace={handleStartRace}
+          />
+        )}
 
         {/* Status bar */}
         {currentRace && (
@@ -562,7 +575,7 @@ export default function Home() {
               <AdminPanel
                 race={currentRace}
                 entriesCount={filledLanes}
-                onStartRace={handleStartRace}
+                onStartRace={() => currentRace && handleStartRace(currentRace.id)}
                 onNewRace={handleNewRace}
                 isRacing={isRacing}
               />
