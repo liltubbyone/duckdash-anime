@@ -35,7 +35,7 @@ export default function WinnerOverlay({ winner, onClose }) {
             </motion.div>
 
             <div className="flex justify-center">
-              <DuckSprite color={winner.duck_color} size={120} hat={winner.hat} glasses={winner.glasses} clothes={winner.clothes} />
+              <DuckSprite color={winner.duck_color} hexColor={winner.duck_hex} size={120} hat={winner.hat} glasses={winner.glasses} clothes={winner.clothes} />
             </div>
 
             <div>

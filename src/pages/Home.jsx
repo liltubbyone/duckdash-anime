@@ -98,7 +98,7 @@ export default function Home() {
       currentRace &&
       !currentRace.is_mass_race &&
       currentRace.status === "waiting" &&
-      entries.length >= currentRace.total_lanes &&
+      entries.length >= currentRace.total_lanes * (currentRace.ducks_per_lane || 1) &&
       !isRacing
     ) {
       setTimeout(() => startRaceAnimation(), 1000);
@@ -110,7 +110,9 @@ export default function Home() {
   // Buy in handler
   const handleBuyIn = (laneNumber) => {
     if (!currentRace || currentRace.status !== "waiting") return;
-    if (entries.find(e => e.lane_number === laneNumber)) return;
+    const dpl = currentRace.ducks_per_lane || 1;
+    const count = entries.filter(e => e.lane_number === laneNumber).length;
+    if (count >= dpl) return;
     setBuyInModal({ open: true, lane: laneNumber });
   };
 
@@ -118,11 +120,14 @@ export default function Home() {
     // Free race ($0 buy-in): skip checkout and add the duck directly
     if (!currentRace.buy_in_amount || currentRace.buy_in_amount <= 0) {
       try {
-        const takenLanes = new Set(entries.map(e => e.lane_number));
+        const dpl = currentRace.ducks_per_lane || 1;
+        const laneCount = {};
+        entries.forEach(e => { laneCount[e.lane_number] = (laneCount[e.lane_number] || 0) + 1; });
+        const hasRoom = (l) => (laneCount[l] || 0) < dpl;
         let lane = buyInModal.lane;
-        if (!lane || takenLanes.has(lane)) {
+        if (!lane || !hasRoom(lane)) {
           lane = 1;
-          while (takenLanes.has(lane) && lane <= currentRace.total_lanes) lane++;
+          while (!hasRoom(lane) && lane <= currentRace.total_lanes) lane++;
         }
         await base44.entities.RaceEntry.create({
           race_id: currentRace.id,
@@ -201,8 +206,8 @@ export default function Home() {
     const localProgress = {};
     const speedState = {}; // tracks each duck's current fluctuating speed
     entries.forEach(e => {
-      localProgress[e.lane_number] = 0;
-      speedState[e.lane_number] = baseSpeed;
+      localProgress[e.id] = 0;
+      speedState[e.id] = baseSpeed;
     });
     setProgresses({ ...localProgress });
 
@@ -217,10 +222,10 @@ export default function Home() {
       entries.forEach(e => {
         // Occasionally change each duck's speed multiplier for surges / slowdowns
         if (Math.random() < 0.08) {
-          speedState[e.lane_number] = baseSpeed * (0.4 + Math.random() * 1.3);
+          speedState[e.id] = baseSpeed * (0.4 + Math.random() * 1.3);
         }
-        const speed = speedState[e.lane_number];
-        localProgress[e.lane_number] = Math.min(100, Math.max(0, localProgress[e.lane_number] + speed * dt));
+        const speed = speedState[e.id];
+        localProgress[e.id] = Math.min(100, Math.max(0, localProgress[e.id] + speed * dt));
       });
 
       // Throttle React state updates to ~30fps to avoid over-rendering on mobile
@@ -231,7 +236,7 @@ export default function Home() {
 
       // First duck to cross the finish line is the winner
       if (!winner) {
-        const crossed = entries.find(e => localProgress[e.lane_number] >= 100);
+        const crossed = entries.find(e => localProgress[e.id] >= 100);
         if (crossed) winner = crossed;
       }
 
@@ -279,6 +284,7 @@ export default function Home() {
       race_duration: duration,
       is_mass_race: opts.isMassRace || false,
       participants: opts.isMassRace ? opts.participants : [],
+      ducks_per_lane: opts.ducks_per_lane || 1,
     });
 
     setProgresses({});
@@ -310,9 +316,10 @@ export default function Home() {
   }, []);
 
   // Mass race: finish (called by MassRaceTrack when a duck crosses the line)
-  const handleMassRaceFinish = async (winnerName) => {
+  const handleMassRaceFinish = async (winner) => {
+    const winnerName = winner?.name || winner;
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    setWinnerEntry({ duck_name: winnerName, duck_color: "gold", lane_number: 0, player_name: winnerName });
+    setWinnerEntry({ duck_name: winnerName, duck_hex: winner?.hex, duck_color: "gold", lane_number: 0, player_name: winnerName });
     setTimeout(() => setShowWinner(true), 800);
     await base44.entities.DuckRace.update(currentRace.id, {
       status: "finished",
@@ -348,11 +355,11 @@ export default function Home() {
   const rankedEntries = currentRace?.is_mass_race
     ? massRanked
     : [...entries]
-        .sort((a, b) => (progresses[b.lane_number] || 0) - (progresses[a.lane_number] || 0))
+        .sort((a, b) => (progresses[b.id] || 0) - (progresses[a.id] || 0))
         .map(e => ({
           name: e.duck_name,
           color: e.duck_color,
-          progress: progresses[e.lane_number] || 0,
+          progress: progresses[e.id] || 0,
           hat: e.hat,
           glasses: e.glasses,
           clothes: e.clothes,
@@ -487,7 +494,7 @@ export default function Home() {
                   entries={entries}
                   progresses={progresses}
                   isRacing={isRacing}
-                  winnerLane={currentRace.winner_lane}
+                  winnerEntryId={winnerEntry?.id || entries.find(e => e.is_winner)?.id}
                   onBuyIn={handleBuyIn}
                 />
               )

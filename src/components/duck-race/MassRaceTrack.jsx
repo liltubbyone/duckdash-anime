@@ -266,7 +266,7 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     }
 
     if (winnerDuck) {
-      onFinishRef.current(winnerDuck.name);
+      onFinishRef.current({ name: winnerDuck.name, hex: DUCK_COLORS[winnerDuck.colorIndex] });
       return; // Stop the loop
     }
 
@@ -281,7 +281,7 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     const durationMs = Math.max(3, race?.race_duration || 10) * 1000;
     const baseSpeed = 1 / durationMs;
 
-    ducksRef.current = names.map(name => ({ name, progress: 0 }));
+    ducksRef.current = names.map((name, i) => ({ name, progress: 0, colorIndex: i % DUCK_COLORS.length }));
     speedsRef.current = names.map(() => baseSpeed);
     winnerRef.current = null;
     lastTimeRef.current = 0;
@@ -351,12 +351,17 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     const cols = Math.ceil(names.length / rows);
     const sprites = spritesRef.current;
     const crown = crownSpriteRef.current;
+    const ducks = ducksRef.current;
+    const startX = 16;
+    const maxX = finishX - duckSize;
+    const range = maxX - startX;
 
     names.forEach((name, i) => {
       const col = i % cols;
       const row = Math.floor(i / cols);
       const y = padding + row * rowHeight + rowHeight / 2 - duckSize / 2;
-      const x = isFinished ? finishX - duckSize - 4 : 16 + (i % 5) * 3;
+      const progress = isFinished && ducks[i] ? (ducks[i].progress || 0) : 0;
+      const x = isFinished ? startX + progress * range : 16 + (i % 5) * 3;
       const sprite = sprites[i % sprites.length];
       ctx.drawImage(sprite, x, y, duckSize, duckSize);
 

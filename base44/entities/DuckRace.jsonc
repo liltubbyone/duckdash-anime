@@ -15,6 +15,11 @@
       "type": "number",
       "default": 6
     },
+    "ducks_per_lane": {
+      "type": "number",
+      "default": 1,
+      "description": "Max ducks allowed to share each lane in lane mode"
+    },
     "buy_in_amount": {
       "type": "number",
       "default": 10

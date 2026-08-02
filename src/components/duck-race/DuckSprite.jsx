@@ -20,8 +20,10 @@ const DUCK_COLORS = {
 
 export const AVAILABLE_COLORS = Object.keys(DUCK_COLORS);
 
-function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none" }) {
-  const c = DUCK_COLORS[color] || DUCK_COLORS.gold;
+function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none", hexColor }) {
+  const c = hexColor
+    ? { body: hexColor, beak: "#FF8C00", wing: hexColor, eye: "#1a1a2e" }
+    : DUCK_COLORS[color] || DUCK_COLORS.gold;
 
   return (
     <svg

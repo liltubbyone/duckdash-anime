@@ -1,18 +1,17 @@
 import React from "react";
 import RaceLane from "./RaceLane";
 
-const POSITION_LABELS = ["🥇", "🥈", "🥉"];
-
-export default function RaceTrack({ race, entries, progresses, isRacing, winnerLane, onBuyIn }) {
+export default function RaceTrack({ race, entries, progresses, isRacing, winnerEntryId, onBuyIn }) {
   const totalLanes = race?.total_lanes || 6;
+  const ducksPerLane = race?.ducks_per_lane || 1;
   const lanes = Array.from({ length: totalLanes }, (_, i) => i + 1);
 
-  // Compute live ranking of filled lanes by progress (descending)
-  const ranked = [...entries]
-    .sort((a, b) => (progresses[b.lane_number] || 0) - (progresses[a.lane_number] || 0));
-  const laneRank = {};
-  ranked.forEach((e, idx) => { laneRank[e.lane_number] = idx + 1; });
-  const leaderLane = isRacing && !winnerLane && ranked.length > 0 ? ranked[0].lane_number : null;
+  // Rank entries by independent progress (supports multiple ducks per lane)
+  const ranked = [...entries].sort((a, b) => (progresses[b.id] || 0) - (progresses[a.id] || 0));
+  const entryRank = {};
+  ranked.forEach((e, idx) => { entryRank[e.id] = idx + 1; });
+  const leaderEntry = isRacing && !winnerEntryId && ranked.length > 0 ? ranked[0] : null;
+  const leaderLane = leaderEntry?.lane_number || null;
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-2">
@@ -31,17 +30,18 @@ export default function RaceTrack({ race, entries, progresses, isRacing, winnerL
       {/* Lanes */}
       <div className="space-y-1.5">
         {lanes.map(laneNum => {
-          const entry = entries.find(e => e.lane_number === laneNum);
+          const laneEntries = entries.filter(e => e.lane_number === laneNum);
           return (
             <RaceLane
               key={laneNum}
               laneNumber={laneNum}
-              entry={entry}
-              progress={progresses[laneNum] || 0}
+              entries={laneEntries}
+              progresses={progresses}
+              entryRank={entryRank}
+              ducksPerLane={ducksPerLane}
               isRacing={isRacing}
-              isWinner={winnerLane === laneNum}
-              isLeader={leaderLane === laneNum}
-              position={laneRank[laneNum]}
+              winnerEntryId={winnerEntryId}
+              isLeaderLane={leaderLane === laneNum}
               onBuyIn={() => onBuyIn(laneNum)}
             />
           );

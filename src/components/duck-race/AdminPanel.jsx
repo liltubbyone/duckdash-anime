@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace, isRacing }) {
   const [buyIn, setBuyIn] = useState("10");
   const [lanes, setLanes] = useState("6");
+  const [ducksPerLane, setDucksPerLane] = useState("1");
   const [duration, setDuration] = useState(race?.race_duration || 10);
   const [isMass, setIsMass] = useState(false);
   const [namesText, setNamesText] = useState("");
@@ -18,6 +19,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
   const handleNewRace = () => {
     const buyInNum = Math.max(0, Number(buyIn) || 0);
     const lanesNum = Math.min(20, Math.max(2, Number(lanes) || 2));
+    const dplNum = Math.max(1, Number(ducksPerLane) || 1);
     if (isMass) {
       const names = namesText
         .split("\n")
@@ -26,7 +28,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
         .slice(0, 1000);
       onNewRace(buyInNum, lanesNum, duration, { isMassRace: true, participants: names });
     } else {
-      onNewRace(buyInNum, lanesNum, duration);
+      onNewRace(buyInNum, lanesNum, duration, { ducks_per_lane: dplNum });
     }
   };
 
@@ -129,6 +131,18 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                   className="bg-white/10 border-white/20 text-white mt-1"
                 />
               </div>
+            </div>
+            <div className="mt-2">
+              <Label className="text-white/60 text-xs">Ducks per Lane</Label>
+              <Input
+                type="number"
+                value={ducksPerLane}
+                onChange={e => setDucksPerLane(e.target.value)}
+                min={1}
+                max={10}
+                className="bg-white/10 border-white/20 text-white mt-1"
+              />
+              <p className="text-white/40 text-xs mt-1">Let multiple ducks share each lane</p>
             </div>
           </>
         )}
