@@ -12,7 +12,7 @@ const DUCK_NAMES = [
   "Turbo Quack", "Duck Norris", "Wave Rider", "Swift Tail"
 ];
 
-export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, takenColors, onConfirm, defaultName = "", defaultLoadout = {} }) {
+export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, takenColors, availableLanes = [], totalLanes = 0, isMassRace, onConfirm, defaultName = "", defaultLoadout = {} }) {
   const savedColor = defaultLoadout?.duck_color;
   const [playerName, setPlayerName] = useState(defaultName);
   const [duckName, setDuckName] = useState(DUCK_NAMES[Math.floor(Math.random() * DUCK_NAMES.length)]);
@@ -23,6 +23,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
   const [glasses, setGlasses] = useState(defaultLoadout?.glasses || "none");
   const [clothes, setClothes] = useState(defaultLoadout?.clothes || "none");
   const [submitting, setSubmitting] = useState(false);
+  const [selectedLane, setSelectedLane] = useState(laneNumber);
 
   // Reset to saved loadout whenever the modal opens
   useEffect(() => {
@@ -33,14 +34,15 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
       setClothes(defaultLoadout?.clothes || "none");
       const sc = defaultLoadout?.duck_color;
       if (sc && !takenColors.includes(sc)) setSelectedColor(sc);
+      setSelectedLane(availableLanes.includes(laneNumber) ? laneNumber : (availableLanes[0] || laneNumber));
     }
-  }, [open, defaultName, defaultLoadout]);
+  }, [open, defaultName, defaultLoadout, laneNumber, availableLanes]);
 
   const handleConfirm = async () => {
     if (!playerName.trim() || submitting) return;
     setSubmitting(true);
     try {
-      await onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor, hat, glasses, clothes });
+      await onConfirm({ playerName: playerName.trim(), duckName, duckColor: selectedColor, hat, glasses, clothes, lane: selectedLane });
     } finally {
       setSubmitting(false);
     }
@@ -54,7 +56,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-display">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
-              🏁 {laneNumber ? `Join Lane ${laneNumber}` : "Join Race"}
+              🏁 Join Race
             </span>
           </DialogTitle>
         </DialogHeader>
@@ -67,6 +69,34 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
               <DuckSprite color={selectedColor} size={100} hat={hat} glasses={glasses} clothes={clothes} />
             </div>
           </div>
+
+          {/* Lane selection */}
+          {!isMassRace && totalLanes > 0 && (
+            <div>
+              <Label className="text-sky-200 text-xs uppercase tracking-wider">Choose Your Lane</Label>
+              <div className="flex flex-wrap gap-1.5 mt-2 justify-center">
+                {Array.from({ length: totalLanes }, (_, i) => i + 1).map(lane => {
+                  const available = availableLanes.includes(lane);
+                  return (
+                    <button
+                      key={lane}
+                      disabled={!available}
+                      onClick={() => setSelectedLane(lane)}
+                      className={`w-9 h-9 rounded-md text-sm font-bold transition-all ${
+                        !available
+                          ? "opacity-25 cursor-not-allowed bg-white/5"
+                          : selectedLane === lane
+                            ? "bg-sky-500 text-white scale-110"
+                            : "bg-white/10 text-white/60 hover:bg-white/20"
+                      }`}
+                    >
+                      {lane}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Color selection */}
           <div>

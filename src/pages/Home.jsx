@@ -11,6 +11,7 @@ import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
+import { Image } from "@/components/ui/image";
 
 export default function Home() {
   const { toast } = useToast();
@@ -119,7 +120,7 @@ export default function Home() {
     setBuyInModal({ open: true, lane: laneNumber });
   };
 
-  const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes }) => {
+  const confirmBuyIn = async ({ playerName, duckName, duckColor, hat, glasses, clothes, lane: chosenLane }) => {
     // Free race ($0 buy-in): skip checkout and add the duck directly
     if (!currentRace.buy_in_amount || currentRace.buy_in_amount <= 0) {
       try {
@@ -131,7 +132,7 @@ export default function Home() {
           const laneCount = {};
           entries.forEach(e => { laneCount[e.lane_number] = (laneCount[e.lane_number] || 0) + 1; });
           const hasRoom = (l) => (laneCount[l] || 0) < dpl;
-          lane = buyInModal.lane;
+          lane = chosenLane || buyInModal.lane;
           if (!lane || !hasRoom(lane)) {
             lane = 1;
             while (!hasRoom(lane) && lane <= currentRace.total_lanes) lane++;
@@ -168,7 +169,7 @@ export default function Home() {
     try {
       const res = await base44.functions.invoke("create-checkout", {
         race_id: currentRace.id,
-        preferred_lane: currentRace.is_mass_race ? 0 : buyInModal.lane,
+        preferred_lane: currentRace.is_mass_race ? 0 : (chosenLane || buyInModal.lane),
         player_name: playerName,
         duck_name: duckName,
         duck_color: duckColor,
@@ -294,6 +295,9 @@ export default function Home() {
       participants: [],
       ducks_per_lane: opts.ducks_per_lane || 1,
       auto_start: opts.auto_start !== false,
+      race_name: opts.race_name || "",
+      prize_name: opts.prize_name || "",
+      prize_image: opts.prize_image || "",
     });
 
     setProgresses({});
@@ -359,6 +363,17 @@ export default function Home() {
   const totalLanes = currentRace?.total_lanes || 6;
   const takenColors = currentRace?.is_mass_race ? [] : entries.map(e => e.duck_color);
   const prizePool = filledLanes * (currentRace?.buy_in_amount || 0);
+  const availableLanes = (() => {
+    if (!currentRace || currentRace.is_mass_race) return [];
+    const dpl = currentRace.ducks_per_lane || 1;
+    const laneCount = {};
+    entries.forEach(e => { laneCount[e.lane_number] = (laneCount[e.lane_number] || 0) + 1; });
+    const list = [];
+    for (let l = 1; l <= totalLanes; l++) {
+      if ((laneCount[l] || 0) < dpl) list.push(l);
+    }
+    return list;
+  })();
 
   // Live leaderboard ranking
   const rankedEntries = currentRace?.is_mass_race
@@ -477,6 +492,25 @@ export default function Home() {
           </div>
         )}
 
+        {/* Race name & prize */}
+        {currentRace && (currentRace.race_name || currentRace.prize_name || currentRace.prize_image) && (
+          <div className="flex items-center justify-center gap-3 mb-6">
+            {currentRace.prize_image && (
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-yellow-500/40 shadow-lg shadow-yellow-500/10">
+                <Image src={currentRace.prize_image} fittingType="fill" className="w-full h-full" />
+              </div>
+            )}
+            <div className="text-center">
+              {currentRace.race_name && (
+                <p className="text-white font-bold text-lg">{currentRace.race_name}</p>
+              )}
+              {currentRace.prize_name && (
+                <p className="text-yellow-300 text-sm">🏆 {currentRace.prize_name}</p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Live leaderboard */}
         {showLeaderboard && (
           <div className="mb-6">
@@ -545,6 +579,9 @@ export default function Home() {
         laneNumber={buyInModal.lane}
         buyInAmount={currentRace?.buy_in_amount ?? 0}
         takenColors={takenColors}
+        availableLanes={availableLanes}
+        totalLanes={totalLanes}
+        isMassRace={currentRace?.is_mass_race}
         defaultName={user?.full_name || ""}
         defaultLoadout={user}
         onConfirm={confirmBuyIn}
