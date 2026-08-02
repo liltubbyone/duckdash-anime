@@ -37,6 +37,7 @@ export default function Leaderboard({ ranked }) {
               >
                 <DuckSprite
                   color={item.color}
+                  hexColor={item.hex}
                   size={isFirst ? 56 : 40}
                   hat={item.hat}
                   glasses={item.glasses}

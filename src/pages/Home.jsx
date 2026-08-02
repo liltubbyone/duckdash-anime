@@ -92,16 +92,19 @@ export default function Home() {
     return () => { unsubRace(); unsubEntry(); };
   }, [loadData]);
 
-  // Auto-start when all lanes filled (standard races only)
+  // Auto-start when all spots are filled (unless admin set manual start)
   useEffect(() => {
-    if (
-      currentRace &&
-      !currentRace.is_mass_race &&
-      currentRace.status === "waiting" &&
-      entries.length >= currentRace.total_lanes * (currentRace.ducks_per_lane || 1) &&
-      !isRacing
-    ) {
-      setTimeout(() => startRaceAnimation(), 1000);
+    if (!currentRace || isRacing || currentRace.status !== "waiting") return;
+    if (currentRace.auto_start === false) return;
+    const capacity = currentRace.is_mass_race
+      ? currentRace.total_lanes || 0
+      : currentRace.total_lanes * (currentRace.ducks_per_lane || 1);
+    if (capacity >= 2 && entries.length >= capacity) {
+      if (currentRace.is_mass_race) {
+        setTimeout(() => handleMassRaceStart(), 1000);
+      } else {
+        setTimeout(() => startRaceAnimation(), 1000);
+      }
     }
   }, [entries.length, currentRace?.status]);
 
@@ -120,14 +123,19 @@ export default function Home() {
     // Free race ($0 buy-in): skip checkout and add the duck directly
     if (!currentRace.buy_in_amount || currentRace.buy_in_amount <= 0) {
       try {
-        const dpl = currentRace.ducks_per_lane || 1;
-        const laneCount = {};
-        entries.forEach(e => { laneCount[e.lane_number] = (laneCount[e.lane_number] || 0) + 1; });
-        const hasRoom = (l) => (laneCount[l] || 0) < dpl;
-        let lane = buyInModal.lane;
-        if (!lane || !hasRoom(lane)) {
-          lane = 1;
-          while (!hasRoom(lane) && lane <= currentRace.total_lanes) lane++;
+        let lane;
+        if (currentRace.is_mass_race) {
+          lane = 0;
+        } else {
+          const dpl = currentRace.ducks_per_lane || 1;
+          const laneCount = {};
+          entries.forEach(e => { laneCount[e.lane_number] = (laneCount[e.lane_number] || 0) + 1; });
+          const hasRoom = (l) => (laneCount[l] || 0) < dpl;
+          lane = buyInModal.lane;
+          if (!lane || !hasRoom(lane)) {
+            lane = 1;
+            while (!hasRoom(lane) && lane <= currentRace.total_lanes) lane++;
+          }
         }
         await base44.entities.RaceEntry.create({
           race_id: currentRace.id,
@@ -160,7 +168,7 @@ export default function Home() {
     try {
       const res = await base44.functions.invoke("create-checkout", {
         race_id: currentRace.id,
-        preferred_lane: buyInModal.lane,
+        preferred_lane: currentRace.is_mass_race ? 0 : buyInModal.lane,
         player_name: playerName,
         duck_name: duckName,
         duck_color: duckColor,
@@ -279,12 +287,13 @@ export default function Home() {
 
     const newRace = await base44.entities.DuckRace.create({
       status: "waiting",
-      total_lanes: opts.isMassRace ? (opts.participants?.length || 0) : totalLanes,
+      total_lanes: totalLanes,
       buy_in_amount: buyInAmount,
       race_duration: duration,
       is_mass_race: opts.isMassRace || false,
-      participants: opts.isMassRace ? opts.participants : [],
+      participants: [],
       ducks_per_lane: opts.ducks_per_lane || 1,
+      auto_start: opts.auto_start !== false,
     });
 
     setProgresses({});
@@ -309,7 +318,7 @@ export default function Home() {
     setMassRanked(
       top.map(t => ({
         name: t.name,
-        color: AVAILABLE_COLORS[t.colorIndex % AVAILABLE_COLORS.length],
+        hex: t.hex,
         progress: (t.progress || 0) * 100,
       }))
     );
@@ -319,7 +328,7 @@ export default function Home() {
   const handleMassRaceFinish = async (winner) => {
     const winnerName = winner?.name || winner;
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    setWinnerEntry({ duck_name: winnerName, duck_hex: winner?.hex, duck_color: "gold", lane_number: 0, player_name: winnerName });
+    setWinnerEntry({ duck_name: winnerName, duck_hex: winner?.hex, duck_color: "gold", lane_number: 0, player_name: winner?.player_name || winnerName, hat: winner?.hat, glasses: winner?.glasses, clothes: winner?.clothes });
     setTimeout(() => setShowWinner(true), 800);
     await base44.entities.DuckRace.update(currentRace.id, {
       status: "finished",
@@ -348,7 +357,7 @@ export default function Home() {
 
   const filledLanes = entries.length;
   const totalLanes = currentRace?.total_lanes || 6;
-  const takenColors = entries.map(e => e.duck_color);
+  const takenColors = currentRace?.is_mass_race ? [] : entries.map(e => e.duck_color);
   const prizePool = filledLanes * (currentRace?.buy_in_amount || 0);
 
   // Live leaderboard ranking
@@ -483,8 +492,12 @@ export default function Home() {
               currentRace.is_mass_race ? (
                 <MassRaceTrack
                   race={currentRace}
+                  entries={entries}
                   isRacing={isRacing}
+                  isAdmin={isAdmin}
+                  autoStart={currentRace.auto_start !== false}
                   onStart={handleMassRaceStart}
+                  onJoin={() => setBuyInModal({ open: true, lane: null })}
                   onFinish={handleMassRaceFinish}
                   onPositionsUpdate={handleMassRacePositions}
                 />

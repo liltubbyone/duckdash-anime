@@ -54,7 +54,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-display">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
-              🏁 Join Lane {laneNumber}
+              🏁 {laneNumber ? `Join Lane ${laneNumber}` : "Join Race"}
             </span>
           </DialogTitle>
         </DialogHeader>

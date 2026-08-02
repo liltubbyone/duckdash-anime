@@ -20,6 +20,10 @@ const DUCK_COLORS = {
 
 export const AVAILABLE_COLORS = Object.keys(DUCK_COLORS);
 
+export const DUCK_COLOR_HEX = Object.fromEntries(
+  Object.entries(DUCK_COLORS).map(([k, v]) => [k, v.body])
+);
+
 function DuckSprite({ color = "gold", size = 60, isRacing = false, className = "", hat = "none", glasses = "none", clothes = "none", hexColor }) {
   const c = hexColor
     ? { body: hexColor, beak: "#FF8C00", wing: hexColor, eye: "#1a1a2e" }

@@ -1,12 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import { DUCK_COLOR_HEX } from "./DuckSprite";
 
-const DUCK_COLORS = [
-  "#FFD700", "#FF69B4", "#4FC3F7", "#66BB6A", "#AB47BC", "#EF5350",
-  "#FF9800", "#26C6DA", "#9CCC65", "#7E57C2", "#EC407A", "#5C6BC0",
-  "#FFCA28", "#26A69A", "#42A5F5", "#7E57C2",
-];
-
-const SPRITE_SIZE = 48; // offscreen sprite resolution
+const SPRITE_SIZE = 48;
 
 // Pre-render a duck sprite to an offscreen canvas for fast drawImage calls
 function createDuckSprite(color, size = SPRITE_SIZE) {
@@ -16,43 +11,36 @@ function createDuckSprite(color, size = SPRITE_SIZE) {
   const ctx = canvas.getContext("2d");
   const s = size;
 
-  // Body
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.ellipse(s * 0.5, s * 0.6, s * 0.32, s * 0.24, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Wing
   ctx.globalAlpha = 0.7;
   ctx.beginPath();
   ctx.ellipse(s * 0.4, s * 0.6, s * 0.16, s * 0.11, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.globalAlpha = 1;
 
-  // Head
   ctx.beginPath();
   ctx.arc(s * 0.7, s * 0.42, s * 0.18, 0, Math.PI * 2);
   ctx.fill();
 
-  // Eye white
   ctx.fillStyle = "white";
   ctx.beginPath();
   ctx.ellipse(s * 0.76, s * 0.4, s * 0.065, s * 0.078, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Pupil
   ctx.fillStyle = "#1a1a2e";
   ctx.beginPath();
   ctx.ellipse(s * 0.77, s * 0.4, s * 0.04, s * 0.05, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Eye shine
   ctx.fillStyle = "white";
   ctx.beginPath();
   ctx.arc(s * 0.79, s * 0.38, s * 0.02, 0, Math.PI * 2);
   ctx.fill();
 
-  // Beak
   ctx.fillStyle = "#FF8C00";
   ctx.beginPath();
   ctx.moveTo(s * 0.86, s * 0.42);
@@ -64,7 +52,6 @@ function createDuckSprite(color, size = SPRITE_SIZE) {
   return canvas;
 }
 
-// Pre-render the crown sprite once
 function createCrownSprite(size = SPRITE_SIZE) {
   const canvas = document.createElement("canvas");
   canvas.width = size;
@@ -76,7 +63,7 @@ function createCrownSprite(size = SPRITE_SIZE) {
   return canvas;
 }
 
-export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPositionsUpdate }) {
+export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, autoStart, onStart, onJoin, onFinish, onPositionsUpdate }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const animFrameRef = useRef(null);
@@ -94,28 +81,30 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
   const [hasStarted, setHasStarted] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 800, height: 450 });
 
-  const participants = race?.participants || [];
+  const capacity = race?.total_lanes || 0;
   const isFinished = race?.status === "finished";
 
-  // Keep onFinish ref in sync (avoids re-creating render loop)
-  useEffect(() => {
-    onFinishRef.current = onFinish;
-  }, [onFinish]);
+  // Derive duck data (name, color, accessories) from signed-up entries
+  const ducksDataRef = useRef([]);
+  ducksDataRef.current = entries.map(e => ({
+    id: e.id,
+    name: e.duck_name,
+    hex: DUCK_COLOR_HEX[e.duck_color] || "#FFD700",
+    hat: e.hat,
+    glasses: e.glasses,
+    clothes: e.clothes,
+    player_name: e.player_name,
+  }));
 
-  useEffect(() => {
-    onPositionsUpdateRef.current = onPositionsUpdate;
-  }, [onPositionsUpdate]);
+  useEffect(() => { onFinishRef.current = onFinish; }, [onFinish]);
+  useEffect(() => { onPositionsUpdateRef.current = onPositionsUpdate; }, [onPositionsUpdate]);
+  useEffect(() => { dimensionsRef.current = dimensions; }, [dimensions]);
 
-  // Keep dimensionsRef in sync
+  // Pre-render duck sprites from each entry's chosen color
   useEffect(() => {
-    dimensionsRef.current = dimensions;
-  }, [dimensions]);
-
-  // Pre-render duck sprites once
-  useEffect(() => {
-    spritesRef.current = DUCK_COLORS.map(c => createDuckSprite(c));
-    crownSpriteRef.current = createCrownSprite();
-  }, []);
+    spritesRef.current = ducksDataRef.current.map(d => createDuckSprite(d.hex));
+    if (!crownSpriteRef.current) crownSpriteRef.current = createCrownSprite();
+  }, [entries]);
 
   // Responsive canvas sizing
   useEffect(() => {
@@ -132,7 +121,6 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  // Draw water background + finish line, return finishX
   const drawBackground = useCallback((ctx, width, height, now) => {
     const grad = ctx.createLinearGradient(0, 0, 0, height);
     grad.addColorStop(0, "#0ea5e9");
@@ -141,14 +129,12 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
 
-    // Wave overlay
     ctx.fillStyle = "rgba(255,255,255,0.05)";
     for (let i = 0; i < width; i += 20) {
       const offset = Math.sin((i + now * 0.05) * 0.02) * 4;
       ctx.fillRect(i, height * 0.7 + offset, 10, height * 0.3);
     }
 
-    // Finish line (checkered)
     const finishX = width - 24;
     let toggle = true;
     for (let y = 0; y < height; y += 8) {
@@ -159,7 +145,6 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     return finishX;
   }, []);
 
-  // Compute grid layout
   const computeLayout = useCallback((count, width, height) => {
     const padding = 8;
     const trackHeight = height - padding * 2;
@@ -174,10 +159,7 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
   // Stable render loop — reads everything from refs
   const render = useCallback((now) => {
     const canvas = canvasRef.current;
-    if (!canvas) {
-      animFrameRef.current = requestAnimationFrame(render);
-      return;
-    }
+    if (!canvas) { animFrameRef.current = requestAnimationFrame(render); return; }
     const ctx = canvas.getContext("2d");
     const { width, height } = dimensionsRef.current;
 
@@ -199,7 +181,6 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     const durationMs = Math.max(3, race?.race_duration || 10) * 1000;
     const baseSpeed = 1 / durationMs;
 
-    // Delta time (clamped)
     if (!lastTimeRef.current) lastTimeRef.current = now;
     const dt = Math.min(50, now - lastTimeRef.current);
     lastTimeRef.current = now;
@@ -208,7 +189,7 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     positionsFrameRef.current++;
     if (positionsFrameRef.current % 6 === 0 && onPositionsUpdateRef.current) {
       const top = ducks
-        .map((d, i) => ({ name: d.name, colorIndex: i, progress: d.progress }))
+        .map((d) => ({ name: d.name, hex: d.hex, progress: d.progress }))
         .sort((a, b) => b.progress - a.progress)
         .slice(0, 3);
       onPositionsUpdateRef.current(top);
@@ -235,7 +216,6 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
       const duck = ducks[i];
 
       if (!winnerDuck) {
-        // Occasionally fluctuate speed
         if (Math.random() < 0.1) {
           speeds[i] = baseSpeed * (0.5 + Math.random() * 1.2);
         }
@@ -249,10 +229,9 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
       const bob = Math.sin(now * 0.005 + i * 0.5) * 2;
       const y = padding + row * rowHeight + rowHeight / 2 + bob - duckSize / 2;
 
-      const sprite = sprites[i % sprites.length];
-      ctx.drawImage(sprite, x, y, duckSize, duckSize);
+      const sprite = sprites[i];
+      if (sprite) ctx.drawImage(sprite, x, y, duckSize, duckSize);
 
-      // Crown on winner
       if (winnerDuck === duck && crown) {
         ctx.drawImage(crown, x + duckSize * 0.1, y - duckSize * 0.3, duckSize, duckSize);
       }
@@ -266,7 +245,15 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     }
 
     if (winnerDuck) {
-      onFinishRef.current({ name: winnerDuck.name, hex: DUCK_COLORS[winnerDuck.colorIndex] });
+      onFinishRef.current({
+        name: winnerDuck.name,
+        hex: winnerDuck.hex,
+        hat: winnerDuck.hat,
+        glasses: winnerDuck.glasses,
+        clothes: winnerDuck.clothes,
+        player_name: winnerDuck.player_name,
+        id: winnerDuck.id,
+      });
       return; // Stop the loop
     }
 
@@ -275,14 +262,14 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
 
   // Start animation
   const startAnimation = useCallback(() => {
-    const names = race?.participants || [];
-    if (names.length === 0) return;
+    const data = ducksDataRef.current;
+    if (data.length === 0) return;
 
     const durationMs = Math.max(3, race?.race_duration || 10) * 1000;
     const baseSpeed = 1 / durationMs;
 
-    ducksRef.current = names.map((name, i) => ({ name, progress: 0, colorIndex: i % DUCK_COLORS.length }));
-    speedsRef.current = names.map(() => baseSpeed);
+    ducksRef.current = data.map(d => ({ ...d, progress: 0 }));
+    speedsRef.current = data.map(() => baseSpeed);
     winnerRef.current = null;
     lastTimeRef.current = 0;
 
@@ -344,11 +331,11 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     drawBackground(ctx, width, height, performance.now());
 
     const finishX = width - 24;
-    const names = race?.participants || [];
-    if (names.length === 0 || spritesRef.current.length === 0) return;
+    const data = ducksDataRef.current;
+    if (data.length === 0 || spritesRef.current.length === 0) return;
 
-    const { rows, rowHeight, duckSize, padding } = computeLayout(names.length, width, height);
-    const cols = Math.ceil(names.length / rows);
+    const { rows, rowHeight, duckSize, padding } = computeLayout(data.length, width, height);
+    const cols = Math.ceil(data.length / rows);
     const sprites = spritesRef.current;
     const crown = crownSpriteRef.current;
     const ducks = ducksRef.current;
@@ -356,33 +343,33 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
     const maxX = finishX - duckSize;
     const range = maxX - startX;
 
-    names.forEach((name, i) => {
+    data.forEach((d, i) => {
       const col = i % cols;
       const row = Math.floor(i / cols);
       const y = padding + row * rowHeight + rowHeight / 2 - duckSize / 2;
       const progress = isFinished && ducks[i] ? (ducks[i].progress || 0) : 0;
       const x = isFinished ? startX + progress * range : 16 + (i % 5) * 3;
-      const sprite = sprites[i % sprites.length];
-      ctx.drawImage(sprite, x, y, duckSize, duckSize);
+      const sprite = sprites[i];
+      if (sprite) ctx.drawImage(sprite, x, y, duckSize, duckSize);
 
-      const isWinner = race?.winner_name === name;
+      const isWinner = race?.winner_name === d.name;
       if (isWinner && crown) {
         ctx.drawImage(crown, x + duckSize * 0.1, y - duckSize * 0.3, duckSize, duckSize);
       }
 
-      if (names.length <= 50) {
+      if (data.length <= 50) {
         ctx.fillStyle = "rgba(255,255,255,0.9)";
         ctx.font = `${Math.max(8, duckSize * 0.4)}px Arial`;
         ctx.textAlign = "left";
-        ctx.fillText(name.substring(0, 12), x + duckSize * 0.7, y + duckSize * 0.3);
+        ctx.fillText(d.name.substring(0, 12), x + duckSize * 0.7, y + duckSize * 0.3);
       }
     });
-  }, [race, isFinished, drawBackground, computeLayout]);
+  }, [race, isFinished, drawBackground, computeLayout, entries]);
 
   useEffect(() => {
     if (isRacing || race?.status === "racing") return;
     drawStatic();
-  }, [dimensions, race, isRacing, isFinished, drawStatic]);
+  }, [dimensions, race, entries, isRacing, isFinished, drawStatic]);
 
   return (
     <div className="space-y-3">
@@ -405,18 +392,32 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
 
         {/* Waiting overlay */}
         {race?.status === "waiting" && !countdown && !hasStarted && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm gap-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm gap-4 px-4 text-center">
             <p className="text-white/80 text-sm">
-              {participants.length} ducks ready to race
+              {entries.length} / {capacity} ducks signed up
             </p>
-            {onStart && (
+            {entries.length < capacity && onJoin && (
+              <button
+                onClick={onJoin}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg transition-all"
+              >
+                🎟️ Join Race
+              </button>
+            )}
+            {isAdmin && onStart && (
               <button
                 onClick={handleStart}
-                disabled={participants.length < 2}
+                disabled={entries.length < 2}
                 className="px-8 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg disabled:opacity-50 transition-all"
               >
                 🏁 Start Mass Race
               </button>
+            )}
+            {!isAdmin && autoStart === false && entries.length >= 2 && (
+              <p className="text-white/50 text-xs">Waiting for admin to start the race</p>
+            )}
+            {!isAdmin && autoStart !== false && entries.length >= capacity && capacity >= 2 && (
+              <p className="text-white/50 text-xs">Race starting soon...</p>
             )}
           </div>
         )}
@@ -429,9 +430,9 @@ export default function MassRaceTrack({ race, isRacing, onStart, onFinish, onPos
         )}
       </div>
 
-      {participants.length > 50 && race?.status !== "racing" && (
+      {entries.length > 50 && race?.status !== "racing" && (
         <p className="text-white/40 text-xs text-center">
-          Showing {participants.length} participants — names hidden during large races
+          {entries.length} participants — names hidden during large races
         </p>
       )}
     </div>

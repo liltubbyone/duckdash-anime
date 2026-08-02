@@ -29,6 +29,11 @@
       "default": 10,
       "description": "Race duration in seconds"
     },
+    "auto_start": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, the race starts automatically when all spots are filled; if false, waits for admin to start"
+    },
     "winner_lane": {
       "type": "number"
     },
