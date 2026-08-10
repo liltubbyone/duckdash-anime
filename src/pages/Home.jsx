@@ -8,9 +8,12 @@ import AdminPanel from "@/components/duck-race/AdminPanel";
 import RaceHistory from "@/components/duck-race/RaceHistory";
 import WinnerOverlay from "@/components/duck-race/WinnerOverlay";
 import Leaderboard from "@/components/duck-race/Leaderboard";
-import RacePreviewSlides from "@/components/duck-race/RacePreviewSlides";
 import SocialShare from "@/components/duck-race/SocialShare";
 import RaceEditor from "@/components/duck-race/RaceEditor";
+import FeaturedRaceHero from "@/components/dashboard/FeaturedRaceHero";
+import StatsGrid from "@/components/dashboard/StatsGrid";
+import RaceActivityPanel from "@/components/dashboard/RaceActivityPanel";
+import { pickFeatured, toFeatured, toActivityRow, computeStats } from "@/lib/raceView";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
 import { Users, Zap } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -395,9 +398,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="py-24 flex flex-col items-center gap-4">
-        <DuckSprite color="gold" size={64} isRacing />
-        <div className="w-7 h-7 border-[3px] border-brand-blue/30 border-t-brand-cyan rounded-full animate-spin" />
+      <div className="space-y-6 lg:space-y-7">
+        <FeaturedRaceHero loading />
+        <StatsGrid loading />
+        <RaceActivityPanel rows={[]} loading />
       </div>
     );
   }
@@ -437,21 +441,63 @@ export default function Home() {
         }));
   const showLeaderboard = currentRace && rankedEntries.length > 0 && (isRacing || currentRace.status === "waiting");
 
-  return (
-    <div className="space-y-6">
-      {/* Preview slides (shown when several races are open at once) */}
-        {activeRaces.length >= 2 && (
-          <RacePreviewSlides
-            races={activeRaces}
-            allEntries={allEntries}
-            selectedRaceId={currentRace?.id}
-            onSelect={handleSelectRace}
-            isAdmin={isAdmin}
-            onStartRace={handleStartRace}
-            onDeleteRace={handleDeleteRace}
-          />
-        )}
+  // ===== Phase 2 dashboard view models =====
+  const featured = toFeatured(pickFeatured(allRaces, allEntries), allEntries, user);
+  const stats = computeStats(allRaces, allEntries);
+  const activityRows = allRaces.slice(0, 6).map((r) => toActivityRow(r, allEntries, user));
 
+  const scrollToArena = () => document.getElementById("arena")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleWatch = (raceId) => {
+    const r = allRaces.find((x) => x.id === raceId);
+    if (!r) return;
+    resetAnimState();
+    setWinnerEntry(null);
+    setShowWinner(false);
+    setSelectedRaceId(raceId);
+    setTimeout(scrollToArena, 60);
+  };
+  const handleJoin = (raceId) => {
+    const r = allRaces.find((x) => x.id === raceId);
+    if (!r) return;
+    resetAnimState();
+    setWinnerEntry(null);
+    setShowWinner(false);
+    setSelectedRaceId(raceId);
+    setBuyInModal({ open: true, lane: null });
+  };
+  const handleManage = (raceId) => {
+    setSelectedRaceId(raceId);
+    setTimeout(() => document.getElementById("admin")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  };
+  const handleCreate = () => window.dispatchEvent(new Event("duckrace:open-create"));
+
+  return (
+    <div className="space-y-6 lg:space-y-7">
+      <FeaturedRaceHero
+        featured={featured}
+        loading={loading}
+        isAdmin={isAdmin}
+        onWatch={handleWatch}
+        onJoin={handleJoin}
+        onView={handleWatch}
+        onManage={handleManage}
+        onCreate={handleCreate}
+      />
+
+      <StatsGrid stats={stats} loading={loading} />
+
+      <RaceActivityPanel
+        rows={activityRows}
+        loading={loading}
+        isAdmin={isAdmin}
+        onSelect={handleWatch}
+        onJoin={handleJoin}
+        onWatch={handleWatch}
+        onViewAll={scrollToArena}
+      />
+
+      {/* Race Arena — playable area */}
+      <section id="arena" className="scroll-mt-24 space-y-6">
         {/* Status bar */}
         {currentRace && (
           <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
@@ -555,7 +601,7 @@ export default function Home() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-4">
+          <div id="admin" className="space-y-4">
             {isAdmin && currentRace && (
               <RaceEditor
                 race={currentRace}
@@ -575,6 +621,7 @@ export default function Home() {
             <RaceHistory races={allRaces} allEntries={allEntries} />
           </div>
         </div>
+      </section>
 
       {/* Buy-in modal */}
       <BuyInModal

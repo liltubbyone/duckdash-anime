@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,13 @@ export default function AppShell() {
   const { user, credits, sidebarRaces, loading, error, retry } = useShellData();
   const [createOpen, setCreateOpen] = useState(false);
   const isAdmin = user?.role === "admin";
+
+  // Allow any dashboard component to open the create-race sheet via a window event.
+  useEffect(() => {
+    const handler = () => setCreateOpen(true);
+    window.addEventListener("duckrace:open-create", handler);
+    return () => window.removeEventListener("duckrace:open-create", handler);
+  }, []);
 
   const handleCreateRace = async (buyInAmount, totalLanes, duration, opts = {}) => {
     try {
