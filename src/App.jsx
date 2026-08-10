@@ -10,6 +10,8 @@ import Home from '@/pages/Home';
 import Profile from '@/pages/Profile';
 import Settings from '@/pages/Settings';
 import Customize from '@/pages/Customize';
+import CreateRace from '@/pages/CreateRace';
+import RaceLobby from '@/pages/RaceLobby';
 import AppShell from '@/components/shell/AppShell';
 // Add page imports here
 
@@ -41,6 +43,8 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route element={<AppShell />}>
         <Route path="/" element={<Home />} />
+        <Route path="/create" element={<CreateRace />} />
+        <Route path="/lobby/:raceId" element={<RaceLobby />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/customize" element={<Customize />} />

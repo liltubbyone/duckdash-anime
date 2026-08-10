@@ -1,52 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
-import { useToast } from "@/components/ui/use-toast";
+import React from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useShellData } from "@/lib/useShellData";
 import BackgroundFX from "./BackgroundFX";
 import DesktopSidebar from "./DesktopSidebar";
 import DashboardHeader from "./DashboardHeader";
 import MobileHeader from "./MobileHeader";
 import MobileBottomNav from "./MobileBottomNav";
-import CreateRaceSheet from "./CreateRaceSheet";
 
 export default function AppShell() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const location = useLocation();
   const { user, credits, sidebarRaces, loading, error, retry } = useShellData();
-  const [createOpen, setCreateOpen] = useState(false);
-  const isAdmin = user?.role === "admin";
 
-  // Allow any dashboard component to open the create-race sheet via a window event.
-  useEffect(() => {
-    const handler = () => setCreateOpen(true);
-    window.addEventListener("duckrace:open-create", handler);
-    return () => window.removeEventListener("duckrace:open-create", handler);
-  }, []);
-
-  const handleCreateRace = async (buyInAmount, totalLanes, duration, opts = {}) => {
-    try {
-      const newRace = await base44.entities.DuckRace.create({
-        status: "waiting",
-        total_lanes: totalLanes,
-        buy_in_amount: buyInAmount,
-        race_duration: duration,
-        is_mass_race: opts.isMassRace || false,
-        participants: [],
-        ducks_per_lane: opts.ducks_per_lane || 1,
-        auto_start: opts.auto_start !== false,
-        race_name: opts.race_name || "",
-        prize_name: opts.prize_name || "",
-        prize_image: opts.prize_image || "",
-      });
-      setCreateOpen(false);
-      toast({ title: "Race created 🦆", description: "Your new race is open for buy-in." });
-      navigate("/");
-      return newRace;
-    } catch (e) {
-      toast({ title: "Could not create race", description: e.message, variant: "destructive" });
-    }
-  };
+  const goCreate = () => navigate("/create");
+  // The builder has its own sticky action bar; hide the mobile bottom nav there.
+  const hideMobileNav = location.pathname === "/create";
 
   return (
     <div className="min-h-screen">
@@ -58,7 +26,7 @@ export default function AppShell() {
         loading={loading}
         error={error}
         onRetry={retry}
-        onCreateRace={() => setCreateOpen(true)}
+        onCreateRace={goCreate}
       />
 
       <MobileHeader user={user} credits={credits} />
@@ -70,14 +38,7 @@ export default function AppShell() {
         </main>
       </div>
 
-      <MobileBottomNav onCreateRace={() => setCreateOpen(true)} />
-
-      <CreateRaceSheet
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        onCreateRace={handleCreateRace}
-        isAdmin={isAdmin}
-      />
+      {!hideMobileNav && <MobileBottomNav onCreateRace={goCreate} />}
     </div>
   );
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import DuckSprite from "@/components/duck-race/DuckSprite";
-import { environmentFor, STARS } from "@/lib/raceArt";
+import { environmentFor, environmentById, STARS } from "@/lib/raceArt";
 
 /**
  * Procedural cinematic race-environment artwork.
  * Layered radial lighting + starfield + lane lines + a large duck character.
  * No text baked in — all UI text is rendered as real HTML by the hero.
  */
-export default function HeroArtwork({ name = "" }) {
-  const env = environmentFor(name);
+export default function HeroArtwork({ name = "", theme = "" }) {
+  const env = theme ? environmentById(theme) : environmentFor(name);
   const [c1, c2] = env.palette;
 
   return (

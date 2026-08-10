@@ -39,6 +39,16 @@
       "default": "",
       "description": "Custom name given to the race by the admin"
     },
+    "description": {
+      "type": "string",
+      "default": "",
+      "description": "Optional short tagline shown in the lobby"
+    },
+    "theme": {
+      "type": "string",
+      "default": "",
+      "description": "Environment theme id used for hero/lobby artwork"
+    },
     "prize_name": {
       "type": "string",
       "default": "",

@@ -4,6 +4,7 @@
 const ENVIRONMENTS = [
   {
     id: "galactic",
+    label: "Galactic Grand Prix",
     keywords: ["galactic", "space", "cosmic", "nebula", "star", "grand prix"],
     palette: ["#8654ff", "#377dff"],
     duck: "purple",
@@ -11,6 +12,7 @@ const ENVIRONMENTS = [
   },
   {
     id: "lagoon",
+    label: "Neon Lagoon",
     keywords: ["neon", "lagoon", "water", "ocean", "aqua", "lake"],
     palette: ["#28c2ff", "#38e39a"],
     duck: "cyan",
@@ -18,6 +20,7 @@ const ENVIRONMENTS = [
   },
   {
     id: "sakura",
+    label: "Sakura Stream",
     keywords: ["sakura", "cherry", "blossom", "spring", "stream"],
     palette: ["#ef55c7", "#ff9b47"],
     duck: "pink",
@@ -25,6 +28,7 @@ const ENVIRONMENTS = [
   },
   {
     id: "arctic",
+    label: "Arctic Dash",
     keywords: ["arctic", "ice", "frozen", "snow", "frost", "polar"],
     palette: ["#28c2ff", "#9fd8ff"],
     duck: "blue",
@@ -32,6 +36,7 @@ const ENVIRONMENTS = [
   },
   {
     id: "volcano",
+    label: "Volcano Rush",
     keywords: ["volcano", "lava", "fire", "magma", "rush", "inferno"],
     palette: ["#ff667d", "#ff9b47"],
     duck: "red",
@@ -39,6 +44,7 @@ const ENVIRONMENTS = [
   },
   {
     id: "moonlight",
+    label: "Moonlight Rapids",
     keywords: ["moon", "moonlight", "midnight", "rapid", "night"],
     palette: ["#377dff", "#8654ff"],
     duck: "indigo",
@@ -61,6 +67,12 @@ export function environmentFor(name = "") {
   }
   return ENVIRONMENTS[hash(n || "duck") % ENVIRONMENTS.length];
 }
+
+export function environmentById(id = "") {
+  return ENVIRONMENTS.find((e) => e.id === id) || DEFAULT_ENV;
+}
+
+export const THEMES = ENVIRONMENTS;
 
 export const STARS = Array.from({ length: 60 }, () => ({
   left: Math.random() * 100,

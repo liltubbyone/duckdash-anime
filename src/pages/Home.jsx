@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
 import RaceTrack from "@/components/duck-race/RaceTrack";
@@ -19,6 +20,7 @@ import { Users, Zap } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 export default function Home() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [allRaces, setAllRaces] = useState([]);
   const [allEntries, setAllEntries] = useState([]);
@@ -396,6 +398,17 @@ export default function Home() {
     }
   }, [currentRace?.id, currentRace?.status, entries.length, isRacing]);
 
+  // Lobby handoff: ?start=1 means a host started from the lobby and we should begin the race.
+  useEffect(() => {
+    if (loading) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("start") === "1" && isAdmin) {
+      const raceId = params.get("race");
+      window.history.replaceState({}, "", window.location.pathname);
+      if (raceId) handleStartRace(raceId);
+    }
+  }, [loading, isAdmin]);
+
   if (loading) {
     return (
       <div className="space-y-6 lg:space-y-7">
@@ -469,7 +482,7 @@ export default function Home() {
     setSelectedRaceId(raceId);
     setTimeout(() => document.getElementById("admin")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
-  const handleCreate = () => window.dispatchEvent(new Event("duckrace:open-create"));
+  const handleCreate = () => navigate("/create");
 
   return (
     <div className="space-y-6 lg:space-y-7">
