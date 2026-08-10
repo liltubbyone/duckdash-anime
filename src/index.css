@@ -1,93 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --font-heading: ui-sans-serif, system-ui, sans-serif;
-    --font-body: ui-sans-serif, system-ui, sans-serif;
-    --font-display: ui-sans-serif, system-ui, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+    /* ===== Duck Race Design System (Phase 1) ===== */
+    /* Page backgrounds */
+    --bg-deep: 222 79% 3.7%;
+    --bg-primary: 219 73% 5.9%;
+    --bg-secondary: 221 64% 7.5%;
 
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Surfaces */
+    --surface-1: 220 62% 9.2%;
+    --surface-2: 225 57% 12%;
+    --surface-3: 223 52% 14.7%;
+    --surface-hover: 224 51% 17.5%;
+
+    /* Text */
+    --text-primary: 220 100% 98.4%;
+    --text-secondary: 222 26% 73%;
+    --text-tertiary: 223 16% 52%;
+    --text-disabled: 225 18% 37%;
+
+    /* Accents */
+    --accent-cyan: 203 100% 57.8%;
+    --accent-blue: 216 100% 60.8%;
+    --accent-purple: 255 100% 66.5%;
+    --accent-pink: 321 83% 63.5%;
+    --accent-yellow: 45 100% 62%;
+    --accent-green: 154 76% 55.5%;
+    --accent-orange: 25 100% 63.9%;
+    --accent-red: 351 100% 70%;
+
+    /* shadcn semantic mapping */
+    --background: var(--bg-deep);
+    --foreground: var(--text-primary);
+    --card: var(--surface-2);
+    --card-foreground: var(--text-primary);
+    --popover: var(--surface-3);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--accent-blue);
+    --primary-foreground: var(--text-primary);
+    --secondary: var(--surface-3);
+    --secondary-foreground: var(--text-secondary);
+    --muted: var(--surface-3);
+    --muted-foreground: var(--text-secondary);
+    --accent: var(--surface-hover);
+    --accent-foreground: var(--text-primary);
+    --destructive: var(--accent-red);
+    --destructive-foreground: var(--text-primary);
+    --border: 222 25% 22%;
+    --input: 222 25% 24%;
+    --ring: var(--accent-cyan);
+    --radius: 0.875rem;
+
+    --font-heading: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    --sidebar-background: var(--bg-primary);
+    --sidebar-foreground: var(--text-secondary);
+    --sidebar-primary: var(--accent-blue);
+    --sidebar-primary-foreground: var(--text-primary);
+    --sidebar-accent: var(--surface-hover);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--accent-cyan);
+
+    --chart-1: 203 100% 57.8%;
+    --chart-2: 255 100% 66.5%;
+    --chart-3: 45 100% 62%;
+    --chart-4: 321 83% 63.5%;
+    --chart-5: 154 76% 55.5%;
   }
 }
-
-
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  img { max-width: 100%; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--accent-cyan));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .t-display { font-size: 32px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; }
+  .t-page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .t-section-title { font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .t-card-title { font-size: 15px; font-weight: 600; line-height: 1.25; }
+  .t-body { font-size: 14px; font-weight: 400; line-height: 1.5; }
+  .t-label { font-size: 12px; font-weight: 600; line-height: 1.2; }
+  .t-meta { font-size: 12px; font-weight: 400; line-height: 1.3; }
+
+  .duck-card {
+    @apply rounded-2xl border border-white/10 bg-gradient-to-b from-surface-2 to-surface-1;
+  }
+  .duck-card-elevated {
+    @apply rounded-2xl border border-white/[0.14] bg-gradient-to-b from-surface-3 to-surface-2;
+    box-shadow: 0 18px 55px rgba(0,0,0,.22);
   }
 }
 
@@ -111,14 +141,12 @@
   100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
 
-.animate-duck-bob {
-  animation: duck-bob 0.6s ease-in-out infinite;
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
-.animate-wave-slow {
-  animation: wave-slow 3s linear infinite;
-}
-
-.animate-float-down {
-  animation: float-down 12s ease-in-out infinite;
-}
+.animate-duck-bob { animation: duck-bob 0.6s ease-in-out infinite; }
+.animate-wave-slow { animation: wave-slow 3s linear infinite; }
+.animate-float-down { animation: float-down 12s ease-in-out infinite; }
+.animate-live-pulse { animation: live-pulse 1.8s ease-in-out infinite; }

@@ -10,6 +10,7 @@ import Home from '@/pages/Home';
 import Profile from '@/pages/Profile';
 import Settings from '@/pages/Settings';
 import Customize from '@/pages/Customize';
+import AppShell from '@/components/shell/AppShell';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -38,10 +39,12 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/customize" element={<Customize />} />
+      <Route element={<AppShell />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/customize" element={<Customize />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

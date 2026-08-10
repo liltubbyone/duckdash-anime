@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
 import RaceTrack from "@/components/duck-race/RaceTrack";
@@ -13,7 +12,7 @@ import RacePreviewSlides from "@/components/duck-race/RacePreviewSlides";
 import SocialShare from "@/components/duck-race/SocialShare";
 import RaceEditor from "@/components/duck-race/RaceEditor";
 import DuckSprite, { AVAILABLE_COLORS } from "@/components/duck-race/DuckSprite";
-import { Users, Zap, UserCircle, Sparkles } from "lucide-react";
+import { Users, Zap } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 export default function Home() {
@@ -396,11 +395,9 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <DuckSprite color="gold" size={80} isRacing />
-          <div className="w-8 h-8 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
-        </div>
+      <div className="py-24 flex flex-col items-center gap-4">
+        <DuckSprite color="gold" size={64} isRacing />
+        <div className="w-7 h-7 border-[3px] border-brand-blue/30 border-t-brand-cyan rounded-full animate-spin" />
       </div>
     );
   }
@@ -441,75 +438,8 @@ export default function Home() {
   const showLeaderboard = currentRace && rankedEntries.length > 0 && (isRacing || currentRace.status === "waiting");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden">
-      {/* Animated background stars */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 50}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              opacity: 0.2 + Math.random() * 0.5,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Cherry blossom petals */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={`petal-${i}`}
-            className="absolute text-pink-300/30 animate-float-down"
-            style={{
-              left: `${10 + Math.random() * 80}%`,
-              animationDelay: `${Math.random() * 8}s`,
-              animationDuration: `${8 + Math.random() * 6}s`,
-              fontSize: `${12 + Math.random() * 14}px`,
-            }}
-          >
-            🌸
-          </div>
-        ))}
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-6 md:py-10">
-        {/* Profile link */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
-          <Link
-            to="/customize"
-            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white text-sm transition-all"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span className="hidden sm:inline">Customize</span>
-          </Link>
-          <Link
-            to="/profile"
-            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white text-sm transition-all"
-          >
-            <UserCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">My Profile</span>
-          </Link>
-        </div>
-
-        {/* Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <DuckSprite color="gold" size={48} />
-            <h1 className="text-4xl md:text-6xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-400">
-              DUCK RACE
-            </h1>
-            <DuckSprite color="pink" size={48} />
-          </div>
-          <p className="text-white/40 text-sm tracking-[0.3em] uppercase">
-            アヒルレース · Pick your duck · Win the race
-          </p>
-        </div>
-
-        {/* Preview slides (shown when several races are open at once) */}
+    <div className="space-y-6">
+      {/* Preview slides (shown when several races are open at once) */}
         {activeRaces.length >= 2 && (
           <RacePreviewSlides
             races={activeRaces}
@@ -645,7 +575,6 @@ export default function Home() {
             <RaceHistory races={allRaces} allEntries={allEntries} />
           </div>
         </div>
-      </div>
 
       {/* Buy-in modal */}
       <BuyInModal
