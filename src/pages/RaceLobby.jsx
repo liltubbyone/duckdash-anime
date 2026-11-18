@@ -166,7 +166,7 @@ export default function RaceLobby() {
   };
 
   if (loading) {
-    return <div className="flex justify-center py-32"><Loader2 className="w-6 h-6 text-brand-cyan animate-spin" /></div>;
+    return <div className="flex justify-center py-32"><Loader2 className="w-6 h-6 text-brand-lime animate-spin" /></div>;
   }
 
   if (!race) {
@@ -189,8 +189,8 @@ export default function RaceLobby() {
         <h1 className="text-2xl font-bold text-white mt-5">{race.race_name || "Race"} has finished</h1>
         <p className="text-slate-400 mt-2">The flock has crossed the finish line.</p>
         <div className="flex items-center justify-center gap-3 mt-6">
-          <button onClick={() => navigate(`/?race=${race.id}`)} className="h-11 px-6 rounded-[11px] bg-gradient-to-r from-brand-pink to-brand-purple text-white font-bold">View Results</button>
-          <button onClick={() => navigate("/")} className="h-11 px-6 rounded-[11px] bg-white/[0.05] border border-white/10 text-slate-200 font-semibold">Dashboard</button>
+          <button onClick={() => navigate(`/?race=${race.id}`)} className="cta-esports h-11 px-6 rounded-xl text-[11.5px] uppercase tracking-[0.12em]">View Results</button>
+          <button onClick={() => navigate("/")} className="h-11 px-6 rounded-xl bg-white/[0.05] border border-white/12 text-slate-200 text-[11.5px] font-bold uppercase tracking-[0.1em]">Dashboard</button>
         </div>
       </div>
     );
@@ -220,10 +220,10 @@ export default function RaceLobby() {
         {/* Participant grid */}
         <div className="duck-card p-4 lg:p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[15px] font-bold text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-brand-cyan" /> Starting Grid
+            <h2 className="text-[13px] font-bold uppercase tracking-[0.1em] text-white flex items-center gap-2">
+              <Users className="w-4 h-4 text-brand-lime" /> Starting Grid
             </h2>
-            <span className="text-[12px] text-slate-400">{entryCount}/{capacity} racers</span>
+            <span className="score-num text-[12px] text-slate-400">{entryCount}<span className="text-slate-600">/{capacity}</span></span>
           </div>
 
           {empty ? (

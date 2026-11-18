@@ -35,7 +35,7 @@ export default function ProfileMenu({ user }) {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2.5 pl-1 pr-2 h-11 rounded-full hover:bg-white/[0.05] transition-colors">
           <Avatar className="w-9 h-9 border border-white/10">
-            <AvatarFallback className="bg-gradient-to-br from-brand-purple/40 to-brand-blue/40 text-white text-xs font-semibold">
+            <AvatarFallback className="bg-gradient-to-br from-brand-lime/30 to-brand-cyan/30 text-white text-xs font-bold">
               {getInitials(name)}
             </AvatarFallback>
           </Avatar>

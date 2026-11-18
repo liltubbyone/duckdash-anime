@@ -73,7 +73,7 @@ export default function SocialShare({ raceId, raceName }) {
       {typeof navigator !== "undefined" && "share" in navigator && (
         <button
           onClick={nativeShare}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-500/30 text-yellow-300 text-xs transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-lime/10 border border-brand-lime/30 text-brand-lime text-[10.5px] font-bold uppercase tracking-[0.1em] transition-all"
         >
           <Share2 className="w-3.5 h-3.5" /> Share
         </button>

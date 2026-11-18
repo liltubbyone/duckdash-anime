@@ -513,28 +513,33 @@ export default function Home() {
       <section id="arena" className="scroll-mt-24 space-y-6">
         {/* Status bar */}
         {currentRace && (
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-              <Users className="w-4 h-4 text-sky-400" />
-              <span className="text-white/80 text-sm">
-                {`${filledLanes}/${totalSpots} Ducks`}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
+            <div className="flex items-center gap-2 px-3.5 h-9 rounded-lg bg-white/[0.04] border border-white/[0.08]">
+              <Users className="w-3.5 h-3.5 text-brand-cyan" />
+              <span className="score-num text-[12px] text-white">
+                {filledLanes}
+                <span className="text-slate-600">/{totalSpots}</span>
               </span>
+              <span className="t-label text-slate-500">Ducks</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-              <span className="text-yellow-400">💰</span>
-              <span className="text-white/80 text-sm">${currentRace.buy_in_amount} Buy-in</span>
+            <div className="flex items-center gap-2 px-3.5 h-9 rounded-lg bg-white/[0.04] border border-white/[0.08]">
+              <span className="text-[11px] font-bold text-brand-yellow">$</span>
+              <span className="score-num text-[12px] text-white">{currentRace.buy_in_amount}</span>
+              <span className="t-label text-slate-500">Buy-in</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-yellow-300 text-sm font-bold">${prizePool} Prize Pool</span>
+            <div className="flex items-center gap-2 px-3.5 h-9 rounded-lg bg-brand-yellow/10 border border-brand-yellow/30">
+              <Zap className="w-3.5 h-3.5 text-brand-yellow" />
+              <span className="score-num text-[12px] font-bold text-brand-yellow">${prizePool}</span>
+              <span className="t-label text-brand-yellow/80">Prize Pool</span>
             </div>
-            <div className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+            <div className={`inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg text-[10.5px] font-bold uppercase tracking-[0.12em] border ${
               currentRace.status === "waiting"
-                ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                ? "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/30"
                 : currentRace.status === "racing"
-                  ? "bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse"
-                  : "bg-white/10 text-white/50 border border-white/10"
+                  ? "bg-brand-lime/12 text-brand-lime border-brand-lime/35"
+                  : "bg-white/[0.05] text-slate-500 border-white/10"
             }`}>
+              {currentRace.status === "racing" && <span className="w-1.5 h-1.5 rounded-full bg-brand-lime animate-live-pulse" />}
               {currentRace.status === "waiting"
                 ? currentRace.is_mass_race ? "Ready to Race" : "Open for Buy-in"
                 : currentRace.status === "racing" ? "Racing!" : "Finished"}

@@ -399,7 +399,7 @@ export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, a
             {entries.length < capacity && onJoin && (
               <button
                 onClick={onJoin}
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg transition-all"
+                className="cta-esports px-8 py-3 rounded-xl font-bold text-[12px] uppercase tracking-[0.14em] transition-all"
               >
                 🎟️ Join Race
               </button>

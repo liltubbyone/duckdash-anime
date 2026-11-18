@@ -57,7 +57,7 @@ export default function PrizeStep({ form, update, errors }) {
 
       {!paid && (
         <div className="rounded-[12px] bg-brand-green/[0.06] border border-brand-green/20 px-4 py-3">
-          <p className="text-[13px] text-slate-200">This race is <span className="font-bold text-brand-green">FREE</span> to join.</p>
+          <p className="text-[13px] text-slate-200">This race is <span className="font-bold text-brand-lime">FREE</span> to join.</p>
         </div>
       )}
     </StepPanel>

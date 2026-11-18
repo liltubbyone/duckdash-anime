@@ -5,26 +5,36 @@ export default function StatCard({ icon: Icon, label, value, context, accent, lo
   if (loading) {
     return (
       <div className="duck-card p-4 lg:p-5 min-h-[108px] lg:min-h-[124px]">
-        <Skeleton className="h-8 w-8 rounded-lg bg-white/[0.06]" />
-        <Skeleton className="h-8 w-16 mt-4 bg-white/[0.06]" />
+        <Skeleton className="h-3 w-20 bg-white/[0.06]" />
+        <Skeleton className="h-8 w-16 mt-5 bg-white/[0.06]" />
       </div>
     );
   }
   return (
-    <div className="duck-card p-4 lg:p-5 min-h-[108px] lg:min-h-[124px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-[1px] hover:border-white/[0.16]">
-      <div className="flex items-center gap-2.5">
+    <div className="duck-card relative overflow-hidden p-4 lg:p-5 min-h-[108px] lg:min-h-[124px] flex flex-col justify-between transition-all duration-200 hover:-translate-y-[1px]">
+      {/* Accent rail */}
+      <span
+        className="absolute left-0 top-0 h-full w-[3px]"
+        style={{ background: `linear-gradient(180deg, ${accent}, transparent 88%)` }}
+      />
+      {/* Corner glow */}
+      <span
+        className="absolute -right-6 -top-6 w-20 h-20 rounded-full blur-2xl opacity-30 pointer-events-none"
+        style={{ background: accent }}
+      />
+
+      <div className="flex items-center justify-between gap-2 relative">
+        <span className="t-label text-slate-500">{label}</span>
         <span
-          className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 rounded-[9px]"
+          className="flex items-center justify-center w-7 h-7 rounded-md shrink-0"
           style={{ background: `${accent}1f`, color: accent }}
         >
-          <Icon className="w-4 h-4 lg:w-[18px] lg:h-[18px]" strokeWidth={1.9} />
+          <Icon className="w-[15px] h-[15px]" strokeWidth={2.2} />
         </span>
-        <span className="t-label text-slate-400">{label}</span>
       </div>
-      <div>
-        <p className="text-[28px] lg:text-[34px] font-bold text-white tabular-nums leading-none tracking-tight">
-          {value}
-        </p>
+
+      <div className="relative">
+        <p className="score-num text-[30px] lg:text-[36px] text-white leading-none">{value}</p>
         {context && <p className="t-meta text-slate-500 mt-1.5">{context}</p>}
       </div>
     </div>

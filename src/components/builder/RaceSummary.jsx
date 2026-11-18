@@ -59,8 +59,8 @@ export default function RaceSummary({ form }) {
         <div className="flex items-center gap-2">
           {remaining === 0 ? (
             <>
-              <CheckCircle2 className="w-4 h-4 text-brand-green" />
-              <span className="text-[12px] font-semibold text-brand-green">Ready to create</span>
+              <CheckCircle2 className="w-4 h-4 text-brand-lime" />
+              <span className="text-[12px] font-semibold text-brand-lime">Ready to create</span>
             </>
           ) : (
             <>

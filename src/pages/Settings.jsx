@@ -37,91 +37,91 @@ export default function Settings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-brand-lime border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden">
-      <div className="relative z-10 max-w-xl mx-auto px-4 py-6 md:py-10">
-        <Link
-          to="/profile"
-          className="inline-flex items-center gap-2 text-white/50 hover:text-white/80 text-sm mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Profile
-        </Link>
+    <div className="max-w-xl mx-auto py-2">
+      <Link
+        to="/profile"
+        className="inline-flex items-center gap-2 text-slate-500 hover:text-white text-[11px] font-bold uppercase tracking-[0.12em] mb-6 transition-colors"
+      >
+        <ArrowLeft className="w-3.5 h-3.5" />
+        Back to Profile
+      </Link>
 
-        <div className="flex items-center gap-2 text-white/90 mb-8">
-          <SettingsIcon className="w-5 h-5 text-sky-400" />
-          <h1 className="text-2xl font-bold font-display">Settings</h1>
+      <div className="flex items-center gap-2.5 mb-6">
+        <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-brand-lime/12 border border-brand-lime/30">
+          <SettingsIcon className="w-4 h-4 text-brand-lime" />
+        </span>
+        <h1 className="t-page-title text-white">Settings</h1>
+      </div>
+
+      {/* Profile section */}
+      <div className="duck-card panel-accent p-5 mb-4">
+        <div className="flex items-center gap-2 mb-4">
+          <User className="w-3.5 h-3.5 text-brand-cyan" />
+          <h2 className="t-label text-slate-300">Profile</h2>
         </div>
 
-        {/* Profile section */}
-        <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 mb-6">
-          <div className="flex items-center gap-2 text-white/90 mb-4">
-            <User className="w-4 h-4 text-sky-400" />
-            <h2 className="font-bold text-sm uppercase tracking-wider">Profile</h2>
+        <div className="space-y-4">
+          <div>
+            <Label className="t-label text-slate-500">Display Name</Label>
+            <Input
+              type="text"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="Enter your name"
+              className="bg-white/[0.04] border-white/12 text-white mt-1.5 focus-visible:ring-brand-lime/40"
+              maxLength={50}
+            />
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <Label className="text-white/60 text-xs">Display Name</Label>
-              <Input
-                type="text"
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
-                placeholder="Enter your name"
-                className="bg-white/10 border-white/20 text-white mt-1.5"
-                maxLength={50}
-              />
-            </div>
-
-            <div>
-              <Label className="text-white/60 text-xs">Email</Label>
-              <Input
-                type="email"
-                value={user?.email || ""}
-                disabled
-                className="bg-white/5 border-white/10 text-white/40 mt-1.5"
-              />
-              <p className="text-white/30 text-xs mt-1">Email cannot be changed</p>
-            </div>
-
-            <div className="flex items-center gap-3 pt-1">
-              <Button
-                onClick={handleSave}
-                disabled={saving || fullName.trim() === (user?.display_name || user?.full_name || "").trim()}
-                className="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold"
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
-              {saved && (
-                <span className="text-green-400 text-sm font-medium">✓ Saved!</span>
-              )}
-            </div>
+          <div>
+            <Label className="t-label text-slate-500">Email</Label>
+            <Input
+              type="email"
+              value={user?.email || ""}
+              disabled
+              className="bg-white/[0.02] border-white/[0.08] text-slate-500 mt-1.5"
+            />
+            <p className="text-slate-600 text-[11px] mt-1">Email cannot be changed</p>
           </div>
-        </div>
 
-        {/* Account section */}
-        <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5">
-          <h2 className="font-bold text-sm uppercase tracking-wider text-white/90 mb-4">Account</h2>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/80 text-sm font-medium">Role</p>
-              <p className="text-white/40 text-xs">{user?.role === "admin" ? "🛡️ Admin" : "🦆 Duck Racer"}</p>
-            </div>
+          <div className="flex items-center gap-3 pt-1">
             <Button
-              onClick={handleLogout}
-              variant="outline"
-              className="bg-white/10 hover:bg-white/20 text-white border-white/20 gap-2"
+              onClick={handleSave}
+              disabled={saving || fullName.trim() === (user?.display_name || user?.full_name || "").trim()}
+              className="cta-esports h-10 px-5 rounded-lg text-[11px] uppercase tracking-[0.12em] hover:brightness-105"
             >
-              <LogOut className="w-4 h-4" />
-              Log Out
+              {saving ? "Saving..." : "Save Changes"}
             </Button>
+            {saved && (
+              <span className="text-brand-lime text-[11px] font-bold uppercase tracking-[0.1em]">Saved</span>
+            )}
           </div>
+        </div>
+      </div>
+
+      {/* Account section */}
+      <div className="duck-card p-5">
+        <h2 className="t-label text-slate-300 mb-4">Account</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-white text-[13.5px] font-semibold">Role</p>
+            <p className="text-slate-500 text-[11px] mt-0.5">{user?.role === "admin" ? "Admin · Race Host" : "Duck Racer"}</p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="bg-white/[0.05] hover:bg-white/[0.1] text-white border-white/15 gap-2 h-10 rounded-lg text-[11px] uppercase tracking-[0.1em] font-bold"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Log Out
+          </Button>
         </div>
       </div>
     </div>

@@ -21,18 +21,19 @@ export default function DesktopSidebar({ user, races, loading, error, onRetry, o
   const isAdmin = user?.role === "admin";
 
   return (
-    <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[278px] z-[30] flex-col border-r border-white/[0.07] bg-[rgba(4,9,25,0.97)] backdrop-blur-xl">
-      <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-5">
+    <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[278px] z-[30] flex-col border-r border-white/[0.06] bg-[hsl(226_38%_4.6%/0.92)] backdrop-blur-2xl">
+      <div className="flex-1 overflow-y-auto px-4 pt-5 pb-4 space-y-5">
         {/* Brand */}
-        <button onClick={() => navigate("/")} className="flex items-center gap-2.5 w-full text-left">
-          <DuckSprite color="gold" size={42} />
-          <div>
-            <h1 className="text-[24px] font-extrabold leading-none tracking-tight bg-gradient-to-r from-brand-yellow via-brand-orange to-brand-pink bg-clip-text text-transparent">
-              DUCK RACE
+        <button onClick={() => navigate("/")} className="group relative flex items-center gap-3 w-full text-left pl-1">
+          <div className="relative shrink-0">
+            <span className="absolute -inset-1.5 rounded-full bg-brand-lime/10 blur-md" />
+            <DuckSprite color="gold" size={40} />
+          </div>
+          <div className="min-w-0">
+            <h1 className="font-display text-[26px] font-extrabold leading-none uppercase tracking-[0.02em] bg-gradient-to-r from-brand-lime via-brand-cyan to-brand-blue bg-clip-text text-transparent">
+              DuckDash
             </h1>
-            <p className="text-[8.5px] tracking-[0.22em] text-slate-500 mt-1 uppercase">
-              Pick your duck · Win the race
-            </p>
+            <p className="t-label text-slate-500 mt-1">Anime Racing League</p>
           </div>
         </button>
 
@@ -40,39 +41,40 @@ export default function DesktopSidebar({ user, races, loading, error, onRetry, o
         {isAdmin && (
           <button
             onClick={onCreateRace}
-            className="group relative flex items-center gap-3 w-full h-[54px] px-4 rounded-[12px] text-white text-sm font-semibold overflow-hidden transition-all duration-200 hover:-translate-y-[1px] hover:brightness-110 active:translate-y-0"
-            style={{
-              background: "linear-gradient(90deg, hsl(var(--accent-pink)), hsl(var(--accent-purple)), hsl(var(--accent-blue)))",
-              boxShadow: "0 12px 30px rgba(111,58,255,0.22)",
-            }}
+            className="cta-esports group relative flex items-center justify-center gap-2 w-full h-[50px] rounded-xl overflow-hidden text-[12.5px] uppercase tracking-[0.14em] hover:-translate-y-[1px] active:translate-y-0"
           >
-            <span className="absolute inset-x-0 top-0 h-px bg-white/25" />
-            <Plus className="w-4 h-4" strokeWidth={2.4} />
-            Create New Race
+            <span className="absolute inset-0 overflow-hidden">
+              <span className="absolute top-0 left-0 h-full w-1/3 bg-white/25 blur-md animate-sheen" />
+            </span>
+            <Plus className="relative w-4 h-4" strokeWidth={2.8} />
+            <span className="relative">Create Race</span>
           </button>
         )}
 
         {/* Navigation */}
-        <nav className="space-y-0.5">
-          {NAV.map((item) => (
-            <NavItem
-              key={item.label}
-              to={item.to}
-              icon={item.icon}
-              label={item.label}
-              active={item.match ? pathname === item.match : false}
-            />
-          ))}
-        </nav>
+        <div>
+          <p className="t-label text-slate-600 px-3 mb-2">Arena</p>
+          <nav className="space-y-0.5">
+            {NAV.map((item) => (
+              <NavItem
+                key={item.label}
+                to={item.to}
+                icon={item.icon}
+                label={item.label}
+                active={item.match ? pathname === item.match : false}
+              />
+            ))}
+          </nav>
+        </div>
 
-        <div className="h-px bg-white/[0.07]" />
+        <div className="hud-divider" />
 
         {/* Active races */}
         <SidebarRaceList races={races} loading={loading} error={error} onRetry={onRetry} />
       </div>
 
       {/* Referral */}
-      <div className="px-5 pb-5 pt-2">
+      <div className="px-4 pb-4 pt-2">
         <ReferralCard />
       </div>
     </aside>

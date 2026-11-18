@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function NavItem({ to, icon: Icon, label, active }) {
@@ -8,21 +7,20 @@ export default function NavItem({ to, icon: Icon, label, active }) {
     <Link
       to={to}
       className={cn(
-        "group relative flex items-center gap-3 h-[46px] px-3 rounded-[10px] text-sm font-medium transition-all duration-200",
+        "group relative flex items-center gap-3 h-[44px] px-3 rounded-lg text-[13.5px] font-semibold transition-all duration-150",
         active
-          ? "text-brand-cyan"
+          ? "text-brand-lime bg-brand-lime/[0.07]"
           : "text-slate-400 hover:text-slate-100 hover:bg-white/[0.04]"
       )}
     >
       {active && (
-        <>
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-brand-cyan shadow-[0_0_8px_hsl(var(--accent-cyan)/0.85)]" />
-          <span className="absolute inset-0 rounded-[10px] bg-gradient-to-r from-brand-blue/15 to-transparent" />
-        </>
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[2.5px] rounded-full bg-brand-lime shadow-[0_0_10px_hsl(var(--accent-lime)/0.9)]" />
       )}
-      <Icon className="w-[18px] h-[18px] relative" strokeWidth={1.8} />
-      <span className="relative">{label}</span>
-      {active && <ChevronRight className="w-4 h-4 ml-auto relative text-slate-500" />}
+      <Icon
+        className={cn("w-[17px] h-[17px] transition-colors", active ? "text-brand-lime" : "text-slate-500 group-hover:text-slate-300")}
+        strokeWidth={2}
+      />
+      <span className="tracking-wide">{label}</span>
     </Link>
   );
 }

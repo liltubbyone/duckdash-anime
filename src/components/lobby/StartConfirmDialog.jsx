@@ -24,7 +24,7 @@ export default function StartConfirmDialog({ open, onOpenChange, race, entryCoun
           <AlertDialogCancel className="bg-white/[0.05] border-white/10 text-slate-200">Not Yet</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-gradient-to-r from-brand-pink to-brand-purple text-white border-0 hover:brightness-110"
+            className="cta-esports border-0 text-[11px] uppercase tracking-[0.12em]"
           >
             Start Countdown
           </AlertDialogAction>

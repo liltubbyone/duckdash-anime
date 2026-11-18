@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,33 +6,34 @@
 
 @layer base {
   :root {
-    /* ===== Duck Race Design System (Phase 1) ===== */
-    /* Page backgrounds */
-    --bg-deep: 222 79% 3.7%;
-    --bg-primary: 219 73% 5.9%;
-    --bg-secondary: 221 64% 7.5%;
+    /* ===== DuckDash Esports Design System ===== */
+    /* Arena backgrounds */
+    --bg-deep: 228 42% 2.6%;
+    --bg-primary: 226 38% 4.6%;
+    --bg-secondary: 226 34% 6.6%;
 
-    /* Surfaces */
-    --surface-1: 220 62% 9.2%;
-    --surface-2: 225 57% 12%;
-    --surface-3: 223 52% 14.7%;
-    --surface-hover: 224 51% 17.5%;
+    /* Layered glass surfaces */
+    --surface-1: 226 30% 7.6%;
+    --surface-2: 226 28% 10.2%;
+    --surface-3: 226 26% 13.2%;
+    --surface-hover: 226 24% 17.4%;
 
     /* Text */
-    --text-primary: 220 100% 98.4%;
-    --text-secondary: 222 26% 73%;
-    --text-tertiary: 223 16% 52%;
-    --text-disabled: 225 18% 37%;
+    --text-primary: 210 40% 98.5%;
+    --text-secondary: 218 20% 72%;
+    --text-tertiary: 218 14% 52%;
+    --text-disabled: 220 12% 38%;
 
-    /* Accents */
-    --accent-cyan: 203 100% 57.8%;
-    --accent-blue: 216 100% 60.8%;
-    --accent-purple: 255 100% 66.5%;
-    --accent-pink: 321 83% 63.5%;
-    --accent-yellow: 45 100% 62%;
-    --accent-green: 154 76% 55.5%;
-    --accent-orange: 25 100% 63.9%;
-    --accent-red: 351 100% 70%;
+    /* Competitive accents */
+    --accent-lime: 84 100% 58%;
+    --accent-green: 84 100% 58%;
+    --accent-cyan: 187 100% 55%;
+    --accent-blue: 217 100% 63%;
+    --accent-purple: 262 100% 68%;
+    --accent-pink: 320 100% 62%;
+    --accent-yellow: 45 100% 58%;
+    --accent-orange: 24 100% 60%;
+    --accent-red: 353 100% 63%;
 
     /* shadcn semantic mapping */
     --background: var(--bg-deep);
@@ -41,8 +42,8 @@
     --card-foreground: var(--text-primary);
     --popover: var(--surface-3);
     --popover-foreground: var(--text-primary);
-    --primary: var(--accent-blue);
-    --primary-foreground: var(--text-primary);
+    --primary: var(--accent-lime);
+    --primary-foreground: 226 45% 5%;
     --secondary: var(--surface-3);
     --secondary-foreground: var(--text-secondary);
     --muted: var(--surface-3);
@@ -51,30 +52,30 @@
     --accent-foreground: var(--text-primary);
     --destructive: var(--accent-red);
     --destructive-foreground: var(--text-primary);
-    --border: 222 25% 22%;
-    --input: 222 25% 24%;
-    --ring: var(--accent-cyan);
-    --radius: 0.875rem;
+    --border: 226 20% 20%;
+    --input: 226 20% 24%;
+    --ring: var(--accent-lime);
+    --radius: 0.75rem;
 
+    --font-display: 'Barlow Condensed', 'Inter', system-ui, -apple-system, sans-serif;
     --font-heading: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-display: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
     --sidebar-background: var(--bg-primary);
     --sidebar-foreground: var(--text-secondary);
-    --sidebar-primary: var(--accent-blue);
-    --sidebar-primary-foreground: var(--text-primary);
+    --sidebar-primary: var(--accent-lime);
+    --sidebar-primary-foreground: 226 45% 5%;
     --sidebar-accent: var(--surface-hover);
     --sidebar-accent-foreground: var(--text-primary);
     --sidebar-border: var(--border);
-    --sidebar-ring: var(--accent-cyan);
+    --sidebar-ring: var(--accent-lime);
 
-    --chart-1: 203 100% 57.8%;
-    --chart-2: 255 100% 66.5%;
-    --chart-3: 45 100% 62%;
-    --chart-4: 321 83% 63.5%;
-    --chart-5: 154 76% 55.5%;
+    --chart-1: 84 100% 58%;
+    --chart-2: 187 100% 55%;
+    --chart-3: 45 100% 58%;
+    --chart-4: 320 100% 62%;
+    --chart-5: 262 100% 68%;
   }
 }
 
@@ -98,32 +99,128 @@
   img { max-width: 100%; }
 
   :focus-visible {
-    outline: 2px solid hsl(var(--accent-cyan));
+    outline: 2px solid hsl(var(--accent-lime));
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: hsl(var(--accent-lime) / 0.3);
+    color: hsl(var(--text-primary));
   }
 }
 
 @layer components {
-  .t-display { font-size: 32px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; }
-  .t-page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
-  .t-section-title { font-size: 17px; font-weight: 700; line-height: 1.2; }
+  /* ===== Typography scale ===== */
+  .t-display {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 800;
+    line-height: 0.94;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+  }
+  .t-page-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .t-section-title { font-size: 16px; font-weight: 700; line-height: 1.2; }
   .t-card-title { font-size: 15px; font-weight: 600; line-height: 1.25; }
-  .t-body { font-size: 14px; font-weight: 400; line-height: 1.5; }
-  .t-label { font-size: 12px; font-weight: 600; line-height: 1.2; }
-  .t-meta { font-size: 12px; font-weight: 400; line-height: 1.3; }
+  .t-body { font-size: 14px; font-weight: 400; line-height: 1.55; }
+  .t-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .t-meta { font-size: 12px; font-weight: 400; line-height: 1.35; }
 
+  /* ===== Glass surfaces ===== */
   .duck-card {
-    @apply rounded-2xl border border-white/10;
-    background-image: linear-gradient(to bottom, hsl(var(--surface-2)), hsl(var(--surface-1)));
+    @apply rounded-2xl border;
+    border-color: hsl(var(--border) / 0.75);
+    background-image: linear-gradient(180deg, hsl(var(--surface-2) / 0.88), hsl(var(--surface-1) / 0.94));
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    box-shadow:
+      inset 0 1px 0 hsl(var(--text-primary) / 0.06),
+      0 18px 44px -24px rgba(0, 0, 0, 0.85);
   }
   .duck-card-elevated {
-    @apply rounded-2xl border border-white/[0.14];
-    background-image: linear-gradient(to bottom, hsl(var(--surface-3)), hsl(var(--surface-2)));
-    box-shadow: 0 18px 55px rgba(0,0,0,.22);
+    @apply rounded-2xl border;
+    border-color: hsl(var(--border) / 0.95);
+    background-image: linear-gradient(180deg, hsl(var(--surface-3) / 0.94), hsl(var(--surface-2) / 0.94));
+    backdrop-filter: blur(20px) saturate(1.15);
+    -webkit-backdrop-filter: blur(20px) saturate(1.15);
+    box-shadow:
+      inset 0 1px 0 hsl(var(--text-primary) / 0.09),
+      0 26px 60px -28px rgba(0, 0, 0, 0.9);
+  }
+
+  /* Top hairline accent used on scoreboard panels */
+  .panel-accent { position: relative; overflow: hidden; }
+  .panel-accent::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--accent-lime) / 0.55), transparent);
+  }
+
+  /* ===== Scoreboard numerals ===== */
+  .score-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  /* ===== Primary competitive CTA ===== */
+  .cta-esports {
+    background-image: linear-gradient(100deg, hsl(84 100% 58%) 0%, hsl(174 100% 48%) 100%);
+    color: hsl(226 45% 5%) !important;
+    font-weight: 700;
+    box-shadow:
+      0 12px 30px -12px hsl(84 100% 58% / 0.6),
+      inset 0 1px 0 hsl(0 0% 100% / 0.4);
+    transition: filter 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  }
+  .cta-esports:hover {
+    filter: brightness(1.06);
+    box-shadow:
+      0 16px 38px -12px hsl(84 100% 58% / 0.7),
+      inset 0 1px 0 hsl(0 0% 100% / 0.5);
+  }
+
+  /* ===== Small status chips ===== */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border;
+    padding: 3px 9px;
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-color: hsl(var(--border));
+    background: hsl(var(--surface-3) / 0.7);
+    color: hsl(var(--text-secondary));
+  }
+
+  .hud-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--border) / 0.9), transparent);
+  }
+
+  .clip-notch {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
   }
 }
 
-/* Duck race animations */
+/* ===== Motion ===== */
 @keyframes duck-bob {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-3px) rotate(-2deg); }
@@ -148,7 +245,20 @@
   50% { opacity: 0.45; }
 }
 
+@keyframes sheen {
+  0% { transform: translateX(-140%) skewX(-18deg); }
+  100% { transform: translateX(340%) skewX(-18deg); }
+}
+
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 hsl(var(--accent-lime) / 0.5); }
+  70% { box-shadow: 0 0 0 10px hsl(var(--accent-lime) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--accent-lime) / 0); }
+}
+
 .animate-duck-bob { animation: duck-bob 0.6s ease-in-out infinite; }
 .animate-wave-slow { animation: wave-slow 3s linear infinite; }
 .animate-float-down { animation: float-down 12s ease-in-out infinite; }
 .animate-live-pulse { animation: live-pulse 1.8s ease-in-out infinite; }
+.animate-sheen { animation: sheen 2.4s ease-in-out infinite; }
+.animate-ring-pulse { animation: ring-pulse 2s ease-out infinite; }

@@ -16,21 +16,21 @@ export default function ReferralCard() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[16px] border border-brand-purple/25 p-4 bg-gradient-to-br from-brand-purple/15 via-surface-3 to-surface-2">
+    <div className="relative overflow-hidden rounded-2xl border border-brand-cyan/25 p-4 bg-gradient-to-br from-brand-cyan/10 via-surface-3 to-surface-2 clip-notch">
       <div
-        className="absolute -right-6 -bottom-6 opacity-90 pointer-events-none"
+        className="absolute -right-6 -bottom-6 opacity-80 pointer-events-none"
         aria-hidden
       >
-        <DuckSprite color="pink" size={92} />
+        <DuckSprite color="cyan" size={92} />
       </div>
       <div className="relative w-[62%]">
-        <h4 className="t-card-title text-white">Build Your Flock</h4>
+        <h4 className="text-[13px] font-bold uppercase tracking-[0.08em] text-white">Build Your Flock</h4>
         <p className="text-[11px] text-slate-300/80 mt-1 leading-relaxed">
           Invite racers and earn credits when they join the fun.
         </p>
         <button
           onClick={handleInvite}
-          className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-pink to-brand-purple text-white text-xs font-semibold hover:brightness-110 transition-all"
+          className="cta-esports mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10.5px] uppercase tracking-[0.1em]"
         >
           <Gift className="w-3.5 h-3.5" />
           Invite Racers

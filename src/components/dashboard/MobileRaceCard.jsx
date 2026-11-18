@@ -3,11 +3,11 @@ import DuckSprite from "@/components/duck-race/DuckSprite";
 import RaceStatusBadge from "@/components/shell/RaceStatusBadge";
 
 const GRADIENTS = [
-  "linear-gradient(135deg,#1e2a55,#0d1630)",
-  "linear-gradient(135deg,#2a1e55,#0d1630)",
-  "linear-gradient(135deg,#1e3a55,#0d1630)",
-  "linear-gradient(135deg,#551e3a,#0d1630)",
-  "linear-gradient(135deg,#1e5540,#0d1630)",
+  "linear-gradient(135deg,#16224d,#080d1f)",
+  "linear-gradient(135deg,#231650,#080d1f)",
+  "linear-gradient(135deg,#123348,#080d1f)",
+  "linear-gradient(135deg,#451332,#080d1f)",
+  "linear-gradient(135deg,#123f31,#080d1f)",
 ];
 
 function hash(str) {
@@ -26,22 +26,22 @@ export default function MobileRaceCard({ row, onSelect, onJoin, onWatch }) {
   return (
     <div
       onClick={() => onSelect(row.id)}
-      className="duck-card p-3.5 cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:border-white/[0.16]"
+      className="duck-card relative overflow-hidden p-3.5 cursor-pointer transition-all duration-200 hover:-translate-y-[1px]"
     >
       <div className="flex items-center gap-3">
         <div
-          className="shrink-0 rounded-[10px] overflow-hidden flex items-center justify-center"
+          className="shrink-0 rounded-lg overflow-hidden flex items-center justify-center border border-white/[0.08]"
           style={{ width: 46, height: 46, background: grad }}
         >
           <DuckSprite color={dc} size={28} />
         </div>
-        <p className="t-card-title text-white truncate flex-1">{row.name}</p>
+        <p className="text-[14px] font-semibold text-white truncate flex-1">{row.name}</p>
         <RaceStatusBadge statusKey={row.statusKey} />
       </div>
 
       <div className="grid grid-cols-3 gap-2 mt-3 text-center">
         <Meta label="Mode" value={row.mode} />
-        <Meta label="Racers" value={`${row.participantCount}/${row.capacity}`} />
+        <Meta label="Racers" value={`${row.participantCount}/${row.capacity}`} mono />
         <Meta label="Prize" value={row.prizeName || (row.entryAmount > 0 ? `$${row.entryAmount}` : "—")} />
       </div>
 
@@ -51,7 +51,7 @@ export default function MobileRaceCard({ row, onSelect, onJoin, onWatch }) {
             e.stopPropagation();
             row.canWatch ? onWatch(row.id) : onJoin(row.id);
           }}
-          className="mt-3 w-full h-9 rounded-[9px] bg-gradient-to-r from-brand-pink to-brand-purple text-white text-[13px] font-semibold hover:brightness-110 transition-all"
+          className="cta-esports mt-3 w-full h-9 rounded-lg text-[11px] uppercase tracking-[0.12em]"
         >
           {row.canWatch ? "Watch Race" : "Join Race"}
         </button>
@@ -60,11 +60,11 @@ export default function MobileRaceCard({ row, onSelect, onJoin, onWatch }) {
   );
 }
 
-function Meta({ label, value }) {
+function Meta({ label, value, mono }) {
   return (
-    <div className="rounded-[9px] bg-white/[0.03] py-1.5 px-1">
-      <p className="text-[10px] text-slate-500 uppercase tracking-wide">{label}</p>
-      <p className="text-[12px] text-slate-200 font-medium truncate">{value}</p>
+    <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] py-1.5 px-1">
+      <p className="text-[9px] text-slate-600 uppercase tracking-[0.12em] font-bold">{label}</p>
+      <p className={`text-[12px] text-slate-200 font-semibold truncate ${mono ? "score-num" : ""}`}>{value}</p>
     </div>
   );
 }

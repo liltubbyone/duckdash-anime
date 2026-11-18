@@ -155,7 +155,7 @@ export default function CreateRace() {
       <div className="lg:hidden mb-4">
         <button onClick={() => setSummaryOpen((v) => !v)} className="w-full flex items-center justify-between duck-card px-4 py-3">
           <span className="text-[13px] font-bold text-white">Race Summary</span>
-          <span className="text-[12px] text-brand-cyan">{summaryOpen ? "Hide" : "Show"}</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-brand-lime">{summaryOpen ? "Hide" : "Show"}</span>
         </button>
         {summaryOpen && <div className="mt-2"><RaceSummary form={form} /></div>}
       </div>
@@ -191,17 +191,17 @@ export default function CreateRace() {
             <button
               onClick={handleCreate}
               disabled={submitting}
-              className="inline-flex items-center gap-2 h-11 px-7 rounded-[11px] bg-gradient-to-r from-brand-pink via-brand-purple to-brand-blue text-white text-[14px] font-bold hover:-translate-y-[1px] hover:brightness-110 disabled:opacity-60 transition-all"
+              className="cta-esports inline-flex items-center gap-2 h-11 px-7 rounded-xl text-[11.5px] uppercase tracking-[0.14em] hover:-translate-y-[1px] disabled:opacity-60"
             >
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" strokeWidth={2.6} />}
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" strokeWidth={3} />}
               {submitting ? "Creating…" : "Create & Open Lobby"}
             </button>
           ) : (
             <button
               onClick={handleContinue}
-              className="inline-flex items-center gap-1.5 h-11 px-6 rounded-[11px] bg-gradient-to-r from-brand-pink to-brand-purple text-white text-[14px] font-bold hover:-translate-y-[1px] hover:brightness-110 transition-all"
+              className="cta-esports inline-flex items-center gap-1.5 h-11 px-6 rounded-xl text-[11.5px] uppercase tracking-[0.14em] hover:-translate-y-[1px]"
             >
-              Continue <ArrowRight className="w-4 h-4" />
+              Continue <ArrowRight className="w-4 h-4" strokeWidth={3} />
             </button>
           )}
         </div>

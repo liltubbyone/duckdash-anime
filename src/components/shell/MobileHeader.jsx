@@ -10,20 +10,20 @@ export default function MobileHeader({ user, credits }) {
 
   return (
     <header
-      className="lg:hidden fixed top-0 inset-x-0 z-[40] h-16 flex items-center justify-between px-4 bg-[rgba(3,8,23,0.88)] backdrop-blur-xl border-b border-white/[0.07]"
+      className="lg:hidden fixed top-0 inset-x-0 z-[40] h-16 flex items-center justify-between px-4 bg-[hsl(228_42%_3%/0.9)] backdrop-blur-2xl border-b border-white/[0.06]"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <button onClick={() => navigate("/")} className="flex items-center gap-2">
-        <DuckSprite color="gold" size={30} />
-        <span className="text-[15px] font-extrabold tracking-tight bg-gradient-to-r from-brand-yellow via-brand-orange to-brand-pink bg-clip-text text-transparent">
-          DUCK RACE
+        <DuckSprite color="gold" size={28} />
+        <span className="font-display text-[19px] font-extrabold uppercase tracking-[0.03em] bg-gradient-to-r from-brand-lime via-brand-cyan to-brand-blue bg-clip-text text-transparent">
+          DuckDash
         </span>
       </button>
       <div className="flex items-center gap-2">
         <CreditsBadge credits={credits} />
         <button onClick={() => navigate("/profile")}>
           <Avatar className="w-9 h-9 border border-white/10">
-            <AvatarFallback className="bg-gradient-to-br from-brand-purple/40 to-brand-blue/40 text-white text-xs font-semibold">
+            <AvatarFallback className="bg-gradient-to-br from-brand-lime/30 to-brand-cyan/30 text-white text-xs font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>

@@ -57,7 +57,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
   return (
     <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 space-y-4">
       <div className="flex items-center gap-2 text-white/90">
-        <Settings className="w-4 h-4 text-sky-400" />
+        <Settings className="w-4 h-4 text-brand-lime" />
         <h3 className="font-bold text-sm uppercase tracking-wider">Admin Controls</h3>
       </div>
 
@@ -134,7 +134,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
           <button
             onClick={() => setIsMass(false)}
             className={`flex-1 py-2 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
-              !isMass ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"
+              !isMass ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
           <button
             onClick={() => setIsMass(true)}
             className={`flex-1 py-2 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
-              isMass ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"
+              isMass ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -212,7 +212,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
             <button
               onClick={() => setAutoStart(true)}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${
-                autoStart ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"
+                autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
               }`}
             >
               Auto (when full)
@@ -220,7 +220,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
             <button
               onClick={() => setAutoStart(false)}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${
-                !autoStart ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"
+                !autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
               }`}
             >
               Manual (admin starts)
@@ -238,7 +238,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                 onClick={() => setDuration(d)}
                 className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${
                   duration === d
-                    ? "bg-sky-500 text-white"
+                    ? "bg-brand-lime text-black"
                     : "bg-white/10 text-white/60 hover:bg-white/20"
                 }`}
               >

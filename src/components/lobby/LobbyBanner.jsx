@@ -8,7 +8,7 @@ export default function LobbyBanner({ race, entryCount, capacity, statusKey, can
   const env = environmentById(race.theme);
 
   return (
-    <div className="relative h-[150px] sm:h-[190px] lg:h-[210px] rounded-[18px] overflow-hidden border border-white/[0.16]">
+    <div className="relative h-[160px] sm:h-[200px] lg:h-[220px] rounded-[20px] overflow-hidden border border-white/[0.14]">
       {/* Artwork */}
       <div
         className="absolute inset-0"
@@ -16,37 +16,48 @@ export default function LobbyBanner({ race, entryCount, capacity, statusKey, can
           background:
             `radial-gradient(120% 100% at 72% 28%, ${env.palette[0]}50, transparent 60%),` +
             `radial-gradient(110% 90% at 25% 85%, ${env.palette[1]}35, transparent 55%),` +
-            `linear-gradient(125deg, #0a1330, #050a1c)`,
+            `linear-gradient(125deg, #0a1330, #04081a)`,
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-[rgba(2,7,22,0.92)] via-[rgba(2,7,22,0.5)] to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(228_42%_3%/0.94)] via-[hsl(228_42%_3%/0.55)] to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent" />
       <div className="absolute right-4 sm:right-8 bottom-0 opacity-90">
         <DuckSprite color={env.duck} size={120} />
       </div>
 
+      {/* HUD corners */}
+      <span className="absolute top-3 left-3 w-3 h-3 border-l border-t border-brand-lime/40" />
+      <span className="absolute bottom-3 left-3 w-3 h-3 border-l border-b border-brand-lime/40" />
+
       <div className="relative z-10 h-full flex flex-col justify-center max-w-[64%] px-5 lg:px-7">
-        <div className="flex items-center gap-2 mb-1.5">
+        <div className="flex items-center gap-2 mb-2">
           <RaceStatusBadge statusKey={statusKey} />
-          <span className="text-[11px] text-slate-300/80">{race.is_mass_race ? "Mass" : "Lanes"} · {entryCount}/{capacity} racers</span>
+          <span className="chip">
+            {race.is_mass_race ? "Mass" : "Lanes"} · {entryCount}/{capacity}
+          </span>
         </div>
-        <h1 className="text-[20px] sm:text-[26px] lg:text-[30px] font-extrabold text-white tracking-tight leading-tight truncate">
+        <h1 className="t-display text-white leading-[0.95] truncate">
           {race.race_name || "Untitled Race"}
         </h1>
-        {race.prize_name && <p className="text-[12px] text-brand-yellow mt-1 truncate">🏆 {race.prize_name}</p>}
+        {race.prize_name && (
+          <p className="text-[11.5px] font-bold uppercase tracking-[0.1em] text-brand-yellow mt-2 truncate">
+            Prize · {race.prize_name}
+          </p>
+        )}
       </div>
 
       {/* Actions */}
       <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
         {canEdit && (
-          <button onClick={onEdit} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[rgba(9,17,38,0.7)] border border-white/15 text-[12px] font-semibold text-slate-100 hover:bg-[rgba(22,33,67,0.85)] backdrop-blur-sm transition-all">
+          <button onClick={onEdit} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[hsl(226_38%_6%/0.75)] border border-white/15 text-[10.5px] font-bold uppercase tracking-[0.1em] text-slate-100 hover:bg-white/[0.12] backdrop-blur-md transition-all">
             <Pencil className="w-3.5 h-3.5" /> Edit
           </button>
         )}
-        <button onClick={onShare} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[rgba(9,17,38,0.7)] border border-white/15 text-[12px] font-semibold text-slate-100 hover:bg-[rgba(22,33,67,0.85)] backdrop-blur-sm transition-all">
+        <button onClick={onShare} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[hsl(226_38%_6%/0.75)] border border-white/15 text-[10.5px] font-bold uppercase tracking-[0.1em] text-slate-100 hover:bg-white/[0.12] backdrop-blur-md transition-all">
           <Share2 className="w-3.5 h-3.5" /> Share
         </button>
         {canLeave && (
-          <button onClick={onLeave} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-brand-red/15 border border-brand-red/25 text-[12px] font-semibold text-brand-red hover:bg-brand-red/25 backdrop-blur-sm transition-all">
+          <button onClick={onLeave} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-brand-red/15 border border-brand-red/25 text-[10.5px] font-bold uppercase tracking-[0.1em] text-brand-red hover:bg-brand-red/25 backdrop-blur-md transition-all">
             <LogOut className="w-3.5 h-3.5" /> Leave
           </button>
         )}

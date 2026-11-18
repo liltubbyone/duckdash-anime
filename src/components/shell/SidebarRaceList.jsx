@@ -6,12 +6,10 @@ export default function SidebarRaceList({ races, loading, error, onRetry }) {
   return (
     <div className="space-y-2.5">
       <div className="flex items-center justify-between px-1">
-        <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-slate-400">
-          Active Races
-        </h3>
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-green/15 border border-brand-green/30">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-live-pulse" />
-          <span className="text-[10px] font-bold text-brand-green uppercase tracking-wider">Live</span>
+        <h3 className="t-label text-slate-500">Active Races</h3>
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-lime/12 border border-brand-lime/30">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-lime animate-live-pulse" />
+          <span className="text-[10px] font-bold text-brand-lime uppercase tracking-[0.1em]">Live</span>
         </span>
       </div>
 

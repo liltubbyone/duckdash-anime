@@ -92,18 +92,18 @@ export default function RaceEditor({ race, onUpdate, onDelete }) {
             <Label className="text-white/60 text-xs">Race Duration</Label>
             <div className="flex gap-1.5 mt-1.5">
               {[5, 10, 15, 20, 30].map(d => (
-                <button key={d} onClick={() => setDuration(d)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${duration === d ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>{d}s</button>
+                <button key={d} onClick={() => setDuration(d)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${duration === d ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>{d}s</button>
               ))}
             </div>
           </div>
           <div>
             <Label className="text-white/60 text-xs mb-1.5 block">Start Mode</Label>
             <div className="flex gap-1.5">
-              <button onClick={() => setAutoStart(true)} className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${autoStart ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>Auto (when full)</button>
-              <button onClick={() => setAutoStart(false)} className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${!autoStart ? "bg-sky-500 text-white" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>Manual</button>
+              <button onClick={() => setAutoStart(true)} className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>Auto (when full)</button>
+              <button onClick={() => setAutoStart(false)} className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${!autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"}`}>Manual</button>
             </div>
           </div>
-          <Button onClick={handleSave} className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold gap-2">
+          <Button onClick={handleSave} className="cta-esports w-full font-bold gap-2 text-[11px] uppercase tracking-[0.12em]">
             <Save className="w-4 h-4" /> Save Changes
           </Button>
           <Button onClick={() => { if (confirm("Delete this race and all its entries?")) onDelete(race.id); }} variant="outline" className="w-full bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-300 gap-2">

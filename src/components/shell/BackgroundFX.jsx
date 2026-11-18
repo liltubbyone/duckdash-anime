@@ -1,39 +1,45 @@
 import React from "react";
 
-const STARS = Array.from({ length: 46 }, () => ({
-  left: Math.random() * 100,
-  top: Math.random() * 100,
-  size: Math.random() * 1.6 + 0.4,
-  opacity: Math.random() * 0.5 + 0.15,
-}));
-
 export default function BackgroundFX() {
   return (
     <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+      {/* Base arena wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(900px 600px at 82% -8%, hsl(var(--accent-purple) / 0.13), transparent 60%)," +
-            "radial-gradient(760px 520px at -5% 105%, hsl(var(--accent-cyan) / 0.08), transparent 60%)," +
-            "linear-gradient(180deg, hsl(var(--bg-deep)) 0%, hsl(var(--bg-primary)) 100%)",
+            "radial-gradient(1100px 620px at 78% -12%, hsl(var(--accent-purple) / 0.16), transparent 62%)," +
+            "radial-gradient(900px 560px at 6% 4%, hsl(var(--accent-cyan) / 0.10), transparent 60%)," +
+            "linear-gradient(180deg, hsl(var(--bg-deep)) 0%, hsl(var(--bg-primary)) 55%, hsl(var(--bg-deep)) 100%)",
         }}
       />
-      <div className="absolute inset-0 opacity-[0.10]">
-        {STARS.map((s, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              left: `${s.left}%`,
-              top: `${s.top}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              opacity: s.opacity,
-            }}
-          />
-        ))}
-      </div>
+
+      {/* Perspective grid floor */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[58%] opacity-[0.20]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, hsl(var(--accent-cyan) / 0.35) 1px, transparent 1px)," +
+            "linear-gradient(to bottom, hsl(var(--accent-cyan) / 0.35) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          transform: "perspective(620px) rotateX(64deg)",
+          transformOrigin: "bottom center",
+          maskImage: "linear-gradient(to top, black, transparent 76%)",
+          WebkitMaskImage: "linear-gradient(to top, black, transparent 76%)",
+        }}
+      />
+
+      {/* Horizon accent */}
+      <div
+        className="absolute inset-x-0 bottom-[38%] h-px"
+        style={{ background: "linear-gradient(90deg, transparent, hsl(var(--accent-lime) / 0.32), transparent)" }}
+      />
+
+      {/* Vignette to keep content readable */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(125% 95% at 50% 0%, transparent 42%, hsl(var(--bg-deep) / 0.86) 100%)" }}
+      />
     </div>
   );
 }

@@ -57,6 +57,7 @@ module.exports = {
   				hover: 'hsl(var(--surface-hover) / <alpha-value>)'
   			},
   			brand: {
+  				lime: 'hsl(var(--accent-lime) / <alpha-value>)',
   				cyan: 'hsl(var(--accent-cyan) / <alpha-value>)',
   				blue: 'hsl(var(--accent-blue) / <alpha-value>)',
   				purple: 'hsl(var(--accent-purple) / <alpha-value>)',
@@ -82,6 +83,11 @@ module.exports = {
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
   			mono: ['var(--font-mono)']
+  		},
+  		boxShadow: {
+  			panel: 'inset 0 1px 0 hsl(var(--text-primary) / 0.06), 0 18px 44px -24px rgba(0,0,0,0.85)',
+  			'glow-lime': '0 12px 30px -12px hsl(var(--accent-lime) / 0.6)',
+  			'glow-cyan': '0 12px 30px -12px hsl(var(--accent-cyan) / 0.55)'
   		},
   		keyframes: {
   			'accordion-down': {

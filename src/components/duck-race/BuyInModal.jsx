@@ -86,7 +86,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                         !available
                           ? "opacity-25 cursor-not-allowed bg-white/5"
                           : selectedLane === lane
-                            ? "bg-sky-500 text-white scale-110"
+                            ? "bg-brand-lime text-black scale-110"
                             : "bg-white/10 text-white/60 hover:bg-white/20"
                       }`}
                     >
@@ -173,7 +173,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                       onClick={() => group.set(opt.id)}
                       className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                         group.value === opt.id
-                          ? "bg-sky-500 text-white"
+                          ? "bg-brand-lime text-black"
                           : "bg-white/10 text-white/60 hover:bg-white/20"
                       }`}
                     >
@@ -194,7 +194,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           <Button
             onClick={handleConfirm}
             disabled={!playerName.trim() || availableColors.length === 0 || submitting}
-            className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg h-12"
+            className="cta-esports w-full font-bold text-[12px] uppercase tracking-[0.14em] h-12 rounded-xl"
           >
             {submitting ? "Redirecting to checkout..." : buyInAmount > 0 ? `🦆 Enter Race — $${buyInAmount}` : "🦆 Enter Race — Free"}
           </Button>

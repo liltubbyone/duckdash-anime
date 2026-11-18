@@ -38,27 +38,30 @@ export default function RaceActivityPanel({
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h3 className="t-section-title text-white">Race Activity</h3>
-          <p className="t-meta text-slate-500 mt-0.5">Live, upcoming, and recently completed races.</p>
+          <div className="flex items-center gap-2">
+            <span className="w-1 h-4 rounded-full bg-brand-lime shadow-[0_0_10px_hsl(var(--accent-lime)/0.8)]" />
+            <h3 className="t-section-title text-white uppercase tracking-wide">Race Activity</h3>
+          </div>
+          <p className="t-meta text-slate-500 mt-1">Live, upcoming, and recently completed races.</p>
         </div>
         <button
           onClick={onViewAll}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-cyan hover:underline"
+          className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-brand-lime hover:brightness-110 transition"
         >
           View All <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mt-4 mb-3">
+      <div className="flex items-center gap-1.5 mt-4 mb-3">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-[0.1em] transition-all border ${
               tab === t.id
-                ? "bg-brand-blue/15 text-brand-cyan border border-brand-blue/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] border border-transparent"
+                ? "bg-brand-lime/10 text-brand-lime border-brand-lime/35"
+                : "text-slate-500 hover:text-slate-200 hover:bg-white/[0.04] border-transparent"
             }`}
           >
             {t.label}
@@ -87,12 +90,12 @@ export default function RaceActivityPanel({
                 <col style={{ width: "4%" }} />
               </colgroup>
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.1em] text-slate-500 border-b border-white/[0.07]">
-                  <th className="py-2 pr-3 font-semibold">Race Name</th>
-                  <th className="py-2 pr-3 font-semibold">Mode</th>
-                  <th className="py-2 pr-3 font-semibold">Racers</th>
-                  <th className="py-2 pr-3 font-semibold">Prize</th>
-                  <th className="py-2 pr-3 font-semibold">Status</th>
+                <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-slate-600 border-b border-white/[0.08]">
+                  <th className="py-2.5 pr-3 font-bold">Race Name</th>
+                  <th className="py-2.5 pr-3 font-bold">Mode</th>
+                  <th className="py-2.5 pr-3 font-bold">Racers</th>
+                  <th className="py-2.5 pr-3 font-bold">Prize</th>
+                  <th className="py-2.5 pr-3 font-bold">Status</th>
                   <th></th>
                 </tr>
               </thead>
