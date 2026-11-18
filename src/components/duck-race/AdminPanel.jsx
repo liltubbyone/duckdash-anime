@@ -55,10 +55,10 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
   };
 
   return (
-    <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 space-y-4">
-      <div className="flex items-center gap-2 text-white/90">
-        <Settings className="w-4 h-4 text-brand-lime" />
-        <h3 className="font-bold text-sm uppercase tracking-wider">Admin Controls</h3>
+    <div className="duck-card p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <Settings className="w-3.5 h-3.5 text-brand-lime" />
+        <h3 className="t-label text-slate-400">Admin Controls</h3>
       </div>
 
       {/* Start button for standard races */}
@@ -66,7 +66,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
         <Button
           onClick={onStartRace}
           disabled={!canStart || isRacing}
-          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold h-11 gap-2"
+          className="cta-esports w-full h-11 gap-2 text-[11.5px] uppercase tracking-[0.14em]"
         >
           <Play className="w-4 h-4" />
           Start Race ({entriesCount} ducks)
@@ -75,8 +75,8 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
 
       {race?.status === "finished" && (
         <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2 text-yellow-400">
-            <Trophy className="w-5 h-5" />
+          <div className="flex items-center justify-center gap-2 text-brand-yellow">
+            <Trophy className="w-4 h-4" />
             <span className="font-bold">
               {isMassRace ? `Winner: ${race.winner_name || "—"}` : "Race Complete!"}
             </span>
@@ -88,29 +88,29 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
         {/* Race details */}
         <div className="mb-3 space-y-2">
           <div>
-            <Label className="text-white/60 text-xs">Race Name</Label>
+            <Label className="t-label text-slate-400">Race Name</Label>
             <Input
               value={raceName}
               onChange={e => setRaceName(e.target.value)}
               placeholder="e.g. Saturday Showdown"
-              className="bg-white/10 border-white/20 text-white mt-1"
+              className="bg-white/[0.05] border-white/12 text-white mt-1"
               maxLength={40}
             />
           </div>
           <div>
-            <Label className="text-white/60 text-xs">Prize Name</Label>
+            <Label className="t-label text-slate-400">Prize Name</Label>
             <Input
               value={prizeName}
               onChange={e => setPrizeName(e.target.value)}
               placeholder="e.g. Golden Trophy"
-              className="bg-white/10 border-white/20 text-white mt-1"
+              className="bg-white/[0.05] border-white/12 text-white mt-1"
               maxLength={40}
             />
           </div>
           <div>
-            <Label className="text-white/60 text-xs">Prize Photo</Label>
+            <Label className="t-label text-slate-400">Prize Photo</Label>
             {prizeImage ? (
-              <div className="relative mt-1 w-20 h-20 rounded-lg overflow-hidden border border-white/20">
+              <div className="relative mt-1 w-20 h-20 rounded-lg overflow-hidden border border-white/10">
                 <Image src={prizeImage} fittingType="fill" className="w-full h-full" />
                 <button
                   onClick={() => setPrizeImage("")}
@@ -120,21 +120,21 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                 </button>
               </div>
             ) : (
-              <label className={`mt-1 flex items-center justify-center gap-2 h-20 rounded-lg border border-dashed border-white/20 cursor-pointer hover:bg-white/10 transition-all ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+              <label className={`mt-1 flex items-center justify-center gap-2 h-20 rounded-lg border border-dashed border-white/12 cursor-pointer hover:bg-white/[0.05] hover:border-white/25 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
                 <input type="file" accept="image/*" onChange={handlePrizeUpload} className="hidden" />
-                <span className="text-white/50 text-xs">{uploading ? "Uploading..." : "＋ Upload prize photo"}</span>
+                <span className="t-meta text-slate-500">{uploading ? "Uploading..." : "＋ Upload prize photo"}</span>
               </label>
             )}
           </div>
         </div>
 
         {/* Race mode toggle */}
-        <Label className="text-white/60 text-xs mb-1.5 block">Race Mode</Label>
+        <Label className="t-label text-slate-400 mb-1.5 block">Race Mode</Label>
         <div className="flex gap-1.5 mb-3">
           <button
             onClick={() => setIsMass(false)}
             className={`flex-1 py-2 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
-              !isMass ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
+              !isMass ? "bg-brand-lime text-black" : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
           <button
             onClick={() => setIsMass(true)}
             className={`flex-1 py-2 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
-              isMass ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
+              isMass ? "bg-brand-lime text-black" : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -153,53 +153,53 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
 
         {/* Buy-in (shared) */}
         <div className="mb-3">
-          <Label className="text-white/60 text-xs">Buy-in ($)</Label>
+          <Label className="t-label text-slate-400">Buy-in ($)</Label>
           <Input
             type="number"
             value={buyIn}
             onChange={e => setBuyIn(e.target.value)}
             min={0}
-            className="bg-white/10 border-white/20 text-white mt-1"
+            className="bg-white/[0.05] border-white/12 text-white mt-1"
           />
-          <p className="text-white/40 text-xs mt-1">{Number(buyIn) > 0 ? "Users pay to join" : "Free entry"}</p>
+          <p className="t-meta text-slate-600 mt-1">{Number(buyIn) > 0 ? "Users pay to join" : "Free entry"}</p>
         </div>
 
         {/* Mode-specific capacity */}
         {isMass ? (
           <div className="mb-3">
-            <Label className="text-white/60 text-xs">Total Spots</Label>
+            <Label className="t-label text-slate-400">Total Spots</Label>
             <Input
               type="number"
               value={massSpots}
               onChange={e => setMassSpots(e.target.value)}
               min={2}
               max={1000}
-              className="bg-white/10 border-white/20 text-white mt-1"
+              className="bg-white/[0.05] border-white/12 text-white mt-1"
             />
-            <p className="text-white/40 text-xs mt-1">Users sign up to fill spots</p>
+            <p className="t-meta text-slate-600 mt-1">Users sign up to fill spots</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <Label className="text-white/60 text-xs">Lanes</Label>
+              <Label className="t-label text-slate-400">Lanes</Label>
               <Input
                 type="number"
                 value={lanes}
                 onChange={e => setLanes(e.target.value)}
                 min={2}
                 max={20}
-                className="bg-white/10 border-white/20 text-white mt-1"
+                className="bg-white/[0.05] border-white/12 text-white mt-1"
               />
             </div>
             <div>
-              <Label className="text-white/60 text-xs">Ducks per Lane</Label>
+              <Label className="t-label text-slate-400">Ducks per Lane</Label>
               <Input
                 type="number"
                 value={ducksPerLane}
                 onChange={e => setDucksPerLane(e.target.value)}
                 min={1}
                 max={10}
-                className="bg-white/10 border-white/20 text-white mt-1"
+                className="bg-white/[0.05] border-white/12 text-white mt-1"
               />
             </div>
           </div>
@@ -207,12 +207,12 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
 
         {/* Start mode (shared) */}
         <div className="mb-3">
-          <Label className="text-white/60 text-xs mb-1.5 block">Start Mode</Label>
+          <Label className="t-label text-slate-400 mb-1.5 block">Start Mode</Label>
           <div className="flex gap-1.5">
             <button
               onClick={() => setAutoStart(true)}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${
-                autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
+                autoStart ? "bg-brand-lime text-black" : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
               }`}
             >
               Auto (when full)
@@ -220,7 +220,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
             <button
               onClick={() => setAutoStart(false)}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-all ${
-                !autoStart ? "bg-brand-lime text-black" : "bg-white/10 text-white/60 hover:bg-white/20"
+                !autoStart ? "bg-brand-lime text-black" : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
               }`}
             >
               Manual (admin starts)
@@ -230,7 +230,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
 
         {/* Duration (shared) */}
         <div className="mt-3">
-          <Label className="text-white/60 text-xs">Race Duration</Label>
+          <Label className="t-label text-slate-400">Race Duration</Label>
           <div className="flex gap-1.5 mt-1.5">
             {[5, 10, 15, 20, 30].map(d => (
               <button
@@ -239,7 +239,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
                 className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${
                   duration === d
                     ? "bg-brand-lime text-black"
-                    : "bg-white/10 text-white/60 hover:bg-white/20"
+                    : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
                 }`}
               >
                 {d}s
@@ -249,7 +249,7 @@ export default function AdminPanel({ race, entriesCount, onStartRace, onNewRace,
         </div>
         <Button
           onClick={handleNewRace}
-          className="w-full mt-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 gap-2"
+          className="w-full mt-3 bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 border border-white/12 gap-2"
           variant="outline"
         >
           <RotateCcw className="w-4 h-4" />

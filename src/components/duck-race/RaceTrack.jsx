@@ -14,16 +14,22 @@ export default function RaceTrack({ race, entries, progresses, isRacing, winnerE
   const leaderLane = leaderEntry?.lane_number || null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-2">
+    <div className="w-full max-w-4xl mx-auto">
       {/* Track header */}
-      <div className="flex items-center justify-between px-2 mb-3">
+      <div className="flex items-center justify-between px-1 mb-2.5">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-white/70 text-xs uppercase tracking-widest font-medium">Start</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-lime" />
+          <span className="t-label text-slate-500">Start</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-white/70 text-xs uppercase tracking-widest font-medium">Finish</span>
-          <div className="w-3 h-3 rounded-full bg-red-400" />
+          <span className="t-label text-slate-500">Finish</span>
+          <span
+            className="w-2.5 h-3.5 opacity-70"
+            style={{
+              background:
+                "repeating-linear-gradient(0deg, hsl(var(--text-primary)) 0px, hsl(var(--text-primary)) 2px, transparent 2px, transparent 4px)",
+            }}
+          />
         </div>
       </div>
 

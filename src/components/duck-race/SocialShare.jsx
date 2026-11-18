@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link2, Twitter, Facebook, MessageCircle, Share2, Check } from "lucide-react";
 
+const CHIP = "inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-white/10 bg-white/[0.04] text-slate-400 hover:text-white hover:border-white/25 hover:bg-white/[0.08] text-[11px] font-medium transition-colors";
+
 export default function SocialShare({ raceId, raceName }) {
   const [copied, setCopied] = useState(false);
   const baseUrl = typeof window !== "undefined"
@@ -44,36 +46,24 @@ export default function SocialShare({ raceId, raceName }) {
 
   return (
     <div className="flex items-center gap-2 flex-wrap justify-center">
-      <span className="text-white/50 text-xs">Invite friends:</span>
-      <button
-        onClick={copy}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 text-xs transition-all"
-      >
-        {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Link2 className="w-3.5 h-3.5" />}
-        {copied ? "Copied!" : "Copy Link"}
+      <span className="t-label text-slate-600">Invite</span>
+      <button onClick={copy} className={CHIP}>
+        {copied ? <Check className="w-3.5 h-3.5 text-brand-lime" /> : <Link2 className="w-3.5 h-3.5" />}
+        {copied ? "Copied" : "Copy Link"}
       </button>
-      <button
-        onClick={() => share("x")}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 text-xs transition-all"
-      >
+      <button onClick={() => share("x")} className={CHIP}>
         <Twitter className="w-3.5 h-3.5" /> Post
       </button>
-      <button
-        onClick={() => share("facebook")}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 text-xs transition-all"
-      >
+      <button onClick={() => share("facebook")} className={CHIP}>
         <Facebook className="w-3.5 h-3.5" /> Share
       </button>
-      <button
-        onClick={() => share("whatsapp")}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 text-xs transition-all"
-      >
+      <button onClick={() => share("whatsapp")} className={CHIP}>
         <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
       </button>
       {typeof navigator !== "undefined" && "share" in navigator && (
         <button
           onClick={nativeShare}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-lime/10 border border-brand-lime/30 text-brand-lime text-[10.5px] font-bold uppercase tracking-[0.1em] transition-all"
+          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-brand-lime/10 border border-brand-lime/30 text-brand-lime hover:bg-brand-lime/15 text-[10.5px] font-bold uppercase tracking-[0.1em] transition-colors"
         >
           <Share2 className="w-3.5 h-3.5" /> Share
         </button>

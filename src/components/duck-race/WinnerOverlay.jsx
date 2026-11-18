@@ -11,49 +11,47 @@ export default function WinnerOverlay({ winner, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0, rotate: -10 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", damping: 12, stiffness: 150 }}
-          className="relative bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl p-8 border border-yellow-500/30 shadow-2xl shadow-yellow-500/20 max-w-sm mx-4"
+          initial={{ scale: 0.85, opacity: 0, y: 12 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: "spring", damping: 18, stiffness: 180 }}
+          className="duck-card-elevated panel-accent relative w-full max-w-sm p-7 overflow-visible"
+          style={{ borderColor: "hsl(var(--accent-lime) / 0.35)" }}
           onClick={e => e.stopPropagation()}
         >
-          {/* Sparkle decorations */}
-          <div className="absolute -top-4 -left-4 text-3xl animate-bounce">✨</div>
-          <div className="absolute -top-4 -right-4 text-3xl animate-bounce delay-100">✨</div>
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-2xl animate-pulse">🏆</div>
+          <div className="absolute -top-4 -left-4 text-2xl animate-bounce">✨</div>
+          <div className="absolute -top-4 -right-4 text-2xl animate-bounce">✨</div>
 
-          <div className="text-center space-y-4">
+          <div className="text-center">
+            <p className="t-label text-brand-lime/70">Race Complete</p>
+
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
+              className="mt-3 flex justify-center"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
             >
-              <p className="text-6xl">👑</p>
+              <DuckSprite color={winner.duck_color} hexColor={winner.duck_hex} size={116} hat={winner.hat} glasses={winner.glasses} clothes={winner.clothes} />
             </motion.div>
 
-            <div className="flex justify-center">
-              <DuckSprite color={winner.duck_color} hexColor={winner.duck_hex} size={120} hat={winner.hat} glasses={winner.glasses} clothes={winner.clothes} />
-            </div>
+            <h2 className="mt-3 font-display text-4xl font-extrabold uppercase leading-none tracking-[0.01em] text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-brand-cyan">
+              Winner
+            </h2>
+            <p className="mt-2 text-lg font-bold text-white truncate">{winner.duck_name}</p>
+            <p className="t-meta text-slate-400">Owned by {winner.player_name}</p>
+            {winner.lane_number ? (
+              <p className="score-num mt-1.5 text-[11px] text-brand-yellow/80">LANE #{winner.lane_number}</p>
+            ) : null}
 
-            <div>
-              <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 font-display">
-                WINNER!
-              </h2>
-              <p className="text-white text-xl font-bold mt-1">{winner.duck_name}</p>
-              <p className="text-white/60 text-sm">Owned by {winner.player_name}</p>
-              {winner.lane_number ? (
-                <p className="text-yellow-400/80 text-xs mt-1">Lane #{winner.lane_number}</p>
-              ) : null}
-            </div>
+            <div className="hud-divider my-5" />
 
             <button
               onClick={onClose}
-              className="mt-4 px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm border border-white/20 transition-all"
+              className="cta-esports w-full h-11 rounded-xl text-[11.5px] uppercase tracking-[0.14em]"
             >
-              Close
+              Back to Arena
             </button>
           </div>
         </motion.div>

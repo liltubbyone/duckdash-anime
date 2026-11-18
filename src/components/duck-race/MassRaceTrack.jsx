@@ -373,7 +373,7 @@ export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, a
 
   return (
     <div className="space-y-3">
-      <div ref={containerRef} className="relative w-full rounded-xl overflow-hidden border border-white/10">
+      <div ref={containerRef} className="relative w-full rounded-xl overflow-hidden border border-white/[0.07] bg-surface-1">
         <canvas
           ref={canvasRef}
           width={dimensions.width}
@@ -384,7 +384,7 @@ export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, a
         {/* Countdown overlay */}
         {countdown && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <span className="text-7xl font-bold text-white font-display animate-ping">
+            <span className="score-num text-7xl text-brand-lime drop-shadow-[0_0_24px_hsl(var(--accent-lime)/0.6)]">
               {countdown}
             </span>
           </div>
@@ -393,8 +393,10 @@ export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, a
         {/* Waiting overlay */}
         {race?.status === "waiting" && !countdown && !hasStarted && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm gap-4 px-4 text-center">
-            <p className="text-white/80 text-sm">
-              {entries.length} / {capacity} ducks signed up
+            <p className="t-label text-slate-400">
+              <span className="score-num text-brand-cyan">{entries.length}</span>
+              <span className="text-slate-600"> / {capacity} </span>
+              ducks signed up
             </p>
             {entries.length < capacity && onJoin && (
               <button
@@ -408,30 +410,30 @@ export default function MassRaceTrack({ race, entries = [], isRacing, isAdmin, a
               <button
                 onClick={handleStart}
                 disabled={entries.length < 2}
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg disabled:opacity-50 transition-all"
+                className="cta-esports px-8 h-11 rounded-xl text-[12px] uppercase tracking-[0.14em] disabled:opacity-40"
               >
-                🏁 Start Mass Race
+                Start Mass Race
               </button>
             )}
             {!isAdmin && autoStart === false && entries.length >= 2 && (
-              <p className="text-white/50 text-xs">Waiting for admin to start the race</p>
+              <p className="t-meta text-slate-500">Waiting for admin to start the race</p>
             )}
             {!isAdmin && autoStart !== false && entries.length >= capacity && capacity >= 2 && (
-              <p className="text-white/50 text-xs">Race starting soon...</p>
+              <p className="t-meta text-slate-500">Race starting soon...</p>
             )}
           </div>
         )}
 
         {/* Finished overlay */}
         {isFinished && race?.winner_name && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full bg-yellow-400 text-yellow-900 font-bold shadow-lg">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-4 h-9 inline-flex items-center rounded-lg bg-brand-lime text-black text-[11px] font-bold uppercase tracking-[0.1em] shadow-[0_10px_30px_-10px_hsl(var(--accent-lime)/0.8)]">
             👑 Winner: {race.winner_name}
           </div>
         )}
       </div>
 
       {entries.length > 50 && race?.status !== "racing" && (
-        <p className="text-white/40 text-xs text-center">
+        <p className="t-meta text-slate-600 text-center">
           {entries.length} participants — names hidden during large races
         </p>
       )}

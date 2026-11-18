@@ -52,11 +52,12 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-900 to-slate-800 border-sky-500/30 text-white">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-surface-1 border-white/10 text-white">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-display">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
-              🏁 Join Race
+          <DialogTitle className="text-center">
+            <span className="t-label text-slate-500">Race Entry</span>
+            <span className="mt-1 block font-display text-2xl font-extrabold uppercase tracking-[0.02em]">
+              Join Race
             </span>
           </DialogTitle>
         </DialogHeader>
@@ -65,7 +66,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           {/* Duck Preview */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-sky-400/20 rounded-full blur-xl" />
+              <div className="absolute inset-0 bg-brand-lime/15 rounded-full blur-xl" />
               <DuckSprite color={selectedColor} size={100} hat={hat} glasses={glasses} clothes={clothes} />
             </div>
           </div>
@@ -73,7 +74,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           {/* Lane selection */}
           {!isMassRace && totalLanes > 0 && (
             <div>
-              <Label className="text-sky-200 text-xs uppercase tracking-wider">Choose Your Lane</Label>
+              <Label className="t-label text-slate-400">Choose Your Lane</Label>
               <div className="flex flex-wrap gap-1.5 mt-2 justify-center">
                 {Array.from({ length: totalLanes }, (_, i) => i + 1).map(lane => {
                   const available = availableLanes.includes(lane);
@@ -84,10 +85,10 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                       onClick={() => setSelectedLane(lane)}
                       className={`w-9 h-9 rounded-md text-sm font-bold transition-all ${
                         !available
-                          ? "opacity-25 cursor-not-allowed bg-white/5"
+                          ? "opacity-20 cursor-not-allowed bg-white/[0.03]"
                           : selectedLane === lane
                             ? "bg-brand-lime text-black scale-110"
-                            : "bg-white/10 text-white/60 hover:bg-white/20"
+                            : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
                       }`}
                     >
                       {lane}
@@ -100,7 +101,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
           {/* Color selection */}
           <div>
-            <Label className="text-sky-200 text-xs uppercase tracking-wider">Choose Your Duck</Label>
+            <Label className="t-label text-slate-400">Choose Your Duck</Label>
             <div className="flex gap-2 mt-2 justify-center">
               {AVAILABLE_COLORS.map(color => {
                 const taken = takenColors.includes(color);
@@ -113,7 +114,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                       taken
                         ? "opacity-25 cursor-not-allowed border-transparent"
                         : selectedColor === color
-                          ? "border-white scale-110 shadow-lg"
+                          ? "border-brand-lime scale-110 shadow-[0_0_18px_-6px_hsl(var(--accent-lime)/0.8)]"
                           : "border-transparent hover:border-white/50 hover:scale-105"
                     }`}
                   >
@@ -126,30 +127,30 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
 
           {/* Player name */}
           <div>
-            <Label className="text-sky-200 text-xs uppercase tracking-wider">Your Name</Label>
+            <Label className="t-label text-slate-400">Your Name</Label>
             <Input
               value={playerName}
               onChange={e => setPlayerName(e.target.value)}
               placeholder="Enter your name..."
-              className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-white/40"
+              className="mt-1 bg-white/[0.05] border-white/12 text-white placeholder:text-slate-600"
               maxLength={20}
             />
           </div>
 
           {/* Duck name */}
           <div>
-            <Label className="text-sky-200 text-xs uppercase tracking-wider">Duck Name</Label>
+            <Label className="t-label text-slate-400">Duck Name</Label>
             <div className="flex gap-2 mt-1">
               <Input
                 value={duckName}
                 onChange={e => setDuckName(e.target.value)}
-                className="bg-white/10 border-white/20 text-white"
+                className="bg-white/[0.05] border-white/12 text-white"
                 maxLength={15}
               />
               <Button
                 variant="outline"
                 size="sm"
-                className="border-white/20 text-white hover:bg-white/10 shrink-0"
+                className="border-white/12 text-slate-300 hover:bg-white/[0.08] shrink-0"
                 onClick={() => setDuckName(DUCK_NAMES[Math.floor(Math.random() * DUCK_NAMES.length)])}
               >
                 🎲
@@ -165,7 +166,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
               { label: "Clothes", value: clothes, set: setClothes, options: CLOTHES },
             ].map(group => (
               <div key={group.label}>
-                <Label className="text-sky-200 text-xs uppercase tracking-wider">{group.label}</Label>
+                <Label className="t-label text-slate-400">{group.label}</Label>
                 <div className="flex flex-wrap gap-1.5 mt-1.5">
                   {group.options.map(opt => (
                     <button
@@ -174,7 +175,7 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
                       className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                         group.value === opt.id
                           ? "bg-brand-lime text-black"
-                          : "bg-white/10 text-white/60 hover:bg-white/20"
+                          : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.12] hover:text-white"
                       }`}
                     >
                       {opt.label}
@@ -186,9 +187,9 @@ export default function BuyInModal({ open, onClose, laneNumber, buyInAmount, tak
           </div>
 
           {/* Buy in info */}
-          <div className="bg-white/5 rounded-lg p-3 text-center border border-white/10">
-            <p className="text-white/60 text-xs">Buy-in Amount</p>
-            <p className="text-2xl font-bold text-yellow-400">{buyInAmount > 0 ? `$${buyInAmount}` : "FREE"}</p>
+          <div className="rounded-xl p-3 text-center border border-white/10 bg-white/[0.03]">
+            <p className="t-label text-slate-500">Buy-in Amount</p>
+            <p className="score-num mt-1 text-2xl text-brand-yellow">{buyInAmount > 0 ? `$${buyInAmount}` : "FREE"}</p>
           </div>
 
           <Button
